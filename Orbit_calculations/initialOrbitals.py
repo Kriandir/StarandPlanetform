@@ -3,32 +3,86 @@ import numpy as np
 
 
 # parent class for orbitals
-class Orbitals:
+class Orbitals(object):
 
     instances = []
     def __init__(self, name, mass):
         self.name = name
         self.mass = mass
-        self.y = 0
-        self.vx = 0
+        # self.y = 0
+        # self.vx = 0
+        # self.x = 0
+        # self.vy = 0
         Orbitals.instances.append(self)
+
+    def CM(self):
+        # calculate center of mass based on amount of objects
+        masses = 0
+        xpositions = 0
+        ypositions = 0
+        for i in Orbitals.instances:
+            masses += i.mass
+            xpositions += i.mass * i.x
+            ypositions += i.mass * i.y
+
+        rx = xpositions/masses
+        ry = ypositions/masses
+
+        self.x = self.x - rx
+        self.y = self.y -ry
+
+
+    def InitialSpeed(self):
+
+# If object is a planet calculate its velocity
+        if self.name == 'Planet':
+            self.vy = (1/(1+q))*np.sqrt(G*(Ms+self.mass)/self.x)
+
+
+
+#  IF object is a star calculate its velocity
+        if self.name == "Star":
+            massvsum = 0
+
+            for i in Orbitals.instances:
+                if i.name == 'Planet':
+                    massvsum +=i.mass * i.vy
+
+            self.vy = -1/self.mass * massvsum
+
+
+
+
+
+
 
 # inherit Orbital parent qualities and define a planet
 class Planet(Orbitals):
+
     def __init__(self,name,a,q,e,mass):
-        self.a = a
+        self.x = a
         self.e = e
-        self.vy = (1/(1+q))*np.sqrt(((1+e)/(1-e))) * np.sqrt((G*(Mp + Ms))/a)
-        self.x =((1-e)/(1+q))*a
+        self.vy = 0
+        self.y = 0
+        self.vx = 0
+        # self.vy = (1/(1+q))*np.sqrt(((1+e)/(1-e))) * np.sqrt((G*(Mp + Ms))/a)
+        # self.x =((1-e)/(1+q))*a
+
         Orbitals.__init__(self,name,mass)
+
 
 # inherit Orbital parent qualities and define a star
 class Star(Orbitals):
     def __init__(self,name,mass):
-        self.vy = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].vy
-        self.vx = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].vx
-        self.x = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].x
-        self.y = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].y
+        self.x = 0
+        self.y = 0
+        self.vy = 0
+        self.vx = 0
+        # self.vy = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].vy
+        # self.vx = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].vx
+        # self.x = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].x
+        # self.y = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].y
+        # Star.instances.append(self)
         Orbitals.__init__(self,name,mass)
 
 

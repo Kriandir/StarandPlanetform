@@ -74,8 +74,18 @@ def Draw(p):
 
         # defining initial values
         ic.Orbitals.instances = []
-        Earth = ic.Planet("Earth",ic.a,ic.e,ic.q,ic.Mp)
-        Sun = ic.Star("Sun",ic.Ms)
+        Earth = ic.Planet("Planet",ic.a,ic.e,ic.q,ic.Mp)
+
+
+        Sun = ic.Star("Star",ic.Ms)
+        for i in ic.Orbitals.instances:
+            i.CM()
+        for i in ic.Orbitals.instances:
+            i.InitialSpeed()
+
+
+
+        ##TODO FIX THIS INTO CLASS
         xplist = []
         yplist = []
         xslist = []
@@ -182,10 +192,10 @@ def Draw(p):
         text = "Time spent (s)\n\naverage = %.4f \nmedian = %.4f \ndeviation %.4f" %(average,median,deviation)
         fig.text(.91,.8,text)
 
-    if ic.hourmonth:
-        fig.savefig('2body_%s_a%0.2e_e%0.3f_stepsize_%s.png' %(method,ic.a,ic.e,ic.timehdwm))
-    else:
-        fig.savefig('2body_%s_a%0.2e_e%0.3f_stepsize%s.png' %(method,ic.a,ic.e,ic.dt))
+    # if ic.hourmonth:
+    #     fig.savefig('2body_%s_a%0.2e_e%0.3f_stepsize_%s.png' %(method,ic.a,ic.e,ic.timehdwm))
+    # else:
+    #     fig.savefig('2body_%s_a%0.2e_e%0.3f_stepsize%s.png' %(method,ic.a,ic.e,ic.dt))
     plt.show()
 
 
