@@ -65,12 +65,15 @@ def plotAll(dt,stepamount,p):
                     # determine which calculation we will perform
                     if j == 0:
 
+
                         k.calcEuler(dt)
                     if j == 1:
                         legendname = "LF"
+
                         initialv = lf.calcLeap(dt,initialv)
                     if j == 2:
                         legendname = "RK"
+    
                         u.calcRK(dt)
 
 

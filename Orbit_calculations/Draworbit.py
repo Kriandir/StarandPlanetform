@@ -91,6 +91,7 @@ def Draw(p):
 
 
         # Looping over the time steps
+        print ic.stepamount
         while i < ic.stepamount:
 
             # determine which calculation we will perform
@@ -141,7 +142,7 @@ def Draw(p):
 
             i+=1
 
-    # set the angular momentum and energy as a fraction of its initial value
+    # set the angular momentum and energy as a fraction of its initial value (percentages)
         absenglist = []
         absangmomlist = []
         for i in range(len(englist)):

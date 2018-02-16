@@ -28,34 +28,87 @@ def askdefaults():
 
 
     if default == "y":
-        asktime()
+        asktimesteps()
     if default != "y" and default !="n":
         askdefaults()
 
 def asktimesteps():
-        hourmonth = raw_input("Would you like to plot for hours, days, months and years? (y/n) ").lower()
-        if hourmonth == "y":
-            ic.hourmonth = True
-            asktime()
 
-        if hourmonth =="n":
-            while True:
-                try:
-                    dt = raw_input("Please insert a timestep in integer seconds:").lower()
-                    ic.dt = int(dt)
+        # hourmonth = raw_input("Would you like to plot for hours, days, months and years? (y/n) ").lower()
+        # if hourmonth == "y":
+        #     ic.hourmonth = True
+        #     asktime()
+        #
+        # if hourmonth =="n":
+
+    asktimes = raw_input("Would you like to set timesteps/stepamount? (y/n) ").lower()
+    if asktimes == "y":
+
+        while True:
+            try:
+                dt = raw_input("Please insert a timestep in years:")
+                dt = float(dt)*365.25*24*3600
+                print dt
+                ic.dt = int(dt)
+                print ic.dt
+                break
+            except (KeyboardInterrupt):
+                sys.exit(0)
+            except:
+                continue
+
+        while True:
+            try:
+                asksteps = raw_input("would you like to insert stepamount?: ").lower()
+                if asksteps =='y' or asksteps =='n':
                     break
-                except:
-                    continue
+            except:
+                continue
+
+        if asksteps =='y':
             while True:
                 try:
                     steps = raw_input("Please insert amount of timesteps in integer:").lower()
-                    ic.stepamount = int(steps)
+                    ic.stepamount = int(steps/ic.dt)
                     break
                 except:
                     continue
+        if asksteps =='n':
+            ic.stepamount = int(1e8/ic.dt)
+
+
+        if asktimes == "n":
             asktime()
-        if hourmonth !="n" and hourmonth !="y":
+        if asktimes != "y" and asktimes !="n":
             asktimesteps()
+        asktime()
+        # if hourmonth !="n" and hourmonth !="y":
+        #     asktimesteps()
+
+# def asktimesteps():
+#         hourmonth = raw_input("Would you like to plot for hours, days, months and years? (y/n) ").lower()
+#         if hourmonth == "y":
+#             ic.hourmonth = True
+#             asktime()
+#
+#         if hourmonth =="n":
+#             while True:
+#                 try:
+#                     dt = raw_input("Please insert a timestep in integer seconds:").lower()
+#                     ic.dt = int(dt)
+#                     break
+#                 except:
+#                     continue
+#             while True:
+#                 try:
+#                     steps = raw_input("Please insert amount of timesteps in integer:").lower()
+#                     ic.stepamount = int(steps)
+#                     break
+#                 except:
+#                     continue
+#             asktime()
+#         if hourmonth !="n" and hourmonth !="y":
+#             asktimesteps()
 
 def asktime():
     timer = raw_input("Would you like to time your code? (y/n) ").lower()

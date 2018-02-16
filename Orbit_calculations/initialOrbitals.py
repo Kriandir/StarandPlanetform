@@ -36,8 +36,8 @@ class Star(Orbitals):
 Mp = 5.972e24
 Ms = 1.989e30
 q = Mp/Ms
-dt = 3600
-stepamount = 365*24
+dt = 3600*24*3
+stepamount = 1e8/dt
 a =1.496e11
 e =0.0167
 G = 6.67408e-11
