@@ -91,11 +91,11 @@ def asktimesteps():
     if asktimes == "n":
         # asktime()
         askeuler()
+        return 0
     if asktimes != "y" and asktimes !="n":
         asktimesteps()
     # asktime()
     askeuler()
-    
         # if hourmonth !="n" and hourmonth !="y":
         #     asktimesteps()
 
