@@ -12,8 +12,11 @@ def askdefaults():
                 a = raw_input("Please insert a semi-major axis in m:").lower()
                 ic.a = float(a)
                 break
+            except(KeyboardInterrupt):
+                sys.exit(0)
             except:
                 continue
+
         while True:
             try:
                 e = raw_input("Please insert an eccentricity between or equal to 0 and 1:").lower()
@@ -22,6 +25,8 @@ def askdefaults():
                 if 0<=e<=1:
                     ic.e =e
                     break
+            except(KeyboardInterrupt):
+                sys.exit(0)
             except:
                 continue
         asktimesteps()
@@ -48,22 +53,25 @@ def asktimesteps():
             try:
                 dt = raw_input("Please insert a timestep in years:")
                 dt = float(dt)*365.25*24*3600
-                print dt
                 ic.dt = int(dt)
-                print ic.dt
                 break
-            except (KeyboardInterrupt):
+            except(KeyboardInterrupt):
+                sys.exit(0)
+
+            except:
+                continue
+
+
+        while True:
+            try:
+                asksteps = raw_input("would you like to insert stepamount?(y/n): ").lower()
+                if asksteps =='y' or asksteps =='n':
+                    break
+            except(KeyboardInterrupt):
                 sys.exit(0)
             except:
                 continue
 
-        while True:
-            try:
-                asksteps = raw_input("would you like to insert stepamount?: ").lower()
-                if asksteps =='y' or asksteps =='n':
-                    break
-            except:
-                continue
 
         if asksteps =='y':
             while True:
@@ -71,17 +79,20 @@ def asktimesteps():
                     steps = raw_input("Please insert amount of timesteps in integer:").lower()
                     ic.stepamount = int(steps/ic.dt)
                     break
+                except(KeyboardInterrupt):
+                    sys.exit(0)
                 except:
                     continue
+
         if asksteps =='n':
             ic.stepamount = int(1e8/ic.dt)
 
 
-        if asktimes == "n":
-            asktime()
-        if asktimes != "y" and asktimes !="n":
-            asktimesteps()
+    if asktimes == "n":
         asktime()
+    if asktimes != "y" and asktimes !="n":
+        asktimesteps()
+    asktime()
         # if hourmonth !="n" and hourmonth !="y":
         #     asktimesteps()
 

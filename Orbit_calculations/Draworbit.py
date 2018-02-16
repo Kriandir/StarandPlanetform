@@ -16,7 +16,10 @@ import sys
 
 
 # ask which method to use and if we want to time
-ad.askdefaults()
+try:
+    ad.askdefaults()
+except(KeyboardInterrupt):
+    sys.exit(0)
 timespent = []
 # variable used if timing
 p = 0
@@ -91,7 +94,6 @@ def Draw(p):
 
 
         # Looping over the time steps
-        print ic.stepamount
         while i < ic.stepamount:
 
             # determine which calculation we will perform
@@ -148,6 +150,11 @@ def Draw(p):
         for i in range(len(englist)):
             absenglist.append(englist[i]/starteng)
             absangmomlist.append(angmomlist[i]/startangmom)
+
+        # print Energydifference error
+
+        dE =(englist[0] - englist[-1])/englist[0]
+        print "The error for timesteps of %0.1f = %e" %(ic.dt,dE)
 
         # clock end time if timer is true
         if ic.timer == True:
@@ -217,6 +224,8 @@ def Checkhourmonthday(h,p):
         Earth = ic.Planet("Earth",ic.a,ic.e,ic.q,ic.Mp)
         Sun = ic.Star("Sun",ic.Ms)
         Drawwhat(p)
+
+
 
 # check whether use all methods or just one
 def Drawwhat(p):
