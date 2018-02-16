@@ -17,7 +17,7 @@ import sys
 
 # ask which method to use and if we want to time
 try:
-    ad.askdefaults()
+    ad.asktimesteps()
 except(KeyboardInterrupt):
     sys.exit(0)
 timespent = []
