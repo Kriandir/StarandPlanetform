@@ -154,7 +154,7 @@ def Draw(p):
         # print Energydifference error
 
         dE =(englist[0] - englist[-1])/englist[0]
-        print "The error for timesteps of %0.1f = %e" %(ic.dt,dE)
+        print "The error for timesteps of %0.1f = %.2e" %(ic.dt,dE)
 
         # clock end time if timer is true
         if ic.timer == True:
