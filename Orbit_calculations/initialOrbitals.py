@@ -4,15 +4,12 @@ import numpy as np
 
 # parent class for orbitals
 class Orbitals(object):
+    """Initiation mainclass for all orbitals"""
 
     instances = []
     def __init__(self, name, mass):
         self.name = name
         self.mass = mass
-        # self.y = 0
-        # self.vx = 0
-        # self.x = 0
-        # self.vy = 0
         Orbitals.instances.append(self)
 
     def CM(self):
@@ -58,6 +55,7 @@ class Orbitals(object):
 
 # inherit Orbital parent qualities and define a planet
 class Planet(Orbitals):
+    """Initiazion planet subclasses"""
 
     def __init__(self,name,a,q,e,mass):
         self.x = a
@@ -65,24 +63,18 @@ class Planet(Orbitals):
         self.vy = 0
         self.y = 0
         self.vx = 0
-        # self.vy = (1/(1+q))*np.sqrt(((1+e)/(1-e))) * np.sqrt((G*(Mp + Ms))/a)
-        # self.x =((1-e)/(1+q))*a
 
         Orbitals.__init__(self,name,mass)
 
 
 # inherit Orbital parent qualities and define a star
 class Star(Orbitals):
+    """Initization star subclasses"""
     def __init__(self,name,mass):
         self.x = 0
         self.y = 0
         self.vy = 0
         self.vx = 0
-        # self.vy = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].vy
-        # self.vx = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].vx
-        # self.x = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].x
-        # self.y = -Orbitals.instances[0].mass / mass * Orbitals.instances[0].y
-        # Star.instances.append(self)
         Orbitals.__init__(self,name,mass)
 
 
@@ -105,5 +97,5 @@ timer = False
 hourmonth = False
 timehdwm = ""
 
-x = ((1-e)/(1+q))*a
-v =  (1/(1+q))*np.sqrt(((1+e)/(1-e))) * np.sqrt((G*(Mp + Ms))/a)
+# x = ((1-e)/(1+q))*a
+# v =  (1/(1+q))*np.sqrt(((1+e)/(1-e))) * np.sqrt((G*(Mp + Ms))/a)
