@@ -5,17 +5,51 @@ import theforacc as forc
 
 
 # Perform the Runge-Kutta calculations for both the star and the planet
-def calcK(xp,yp,vxp,vyp,axp,ayp,xs,ys,vxs,vys,axs,ays,dt):
+# def calcK(xp,yp,vxp,vyp,axp,ayp,xs,ys,vxs,vys,axs,ays,dt):
+def calcK(instances, dt)
 
-    # kx1p = vxp
-    # kvx1p = axp
-    # ky1p = vyp
-    # kvy1p = ayp
+    x = []
+    y = []
+    vx = []
+    vy = []
 
-    # kx1s = vxs
-    # kvx1s = axs
-    # ky1s = vys
-    # kvy1s = ays
+    cm_x = 0
+    cm_y = 0
+
+    for i in range(len(instances)):
+        x.append(instances[i].vx)
+        y.append(instances[i].vy)
+        vx.append(instances[i].ax)
+        vy.append(instances[i].ay)
+    
+    for i in range(len(x)):
+        cm_x = instances[i].mass * x[i]
+        cm_x += cm_x
+
+
+    cm_x = cm_x / 
+
+    x2 = []
+    y2 = []
+    vx2 = []
+    vy2 = []
+
+    for i in range(len(instances)):
+        x2.append(x[i] + vx[i]*dt*0.5)
+        y2.append(y[i] + vy[i]*dt*0.5)
+        temp = calcaccx(True, instances[i].x + x[i]*dt*0.5, instances[i].y + y[i]*dt*0.5 ,xs + kx1s*dt*0.5,ys + ky1s*dt*0.5)
+        vx2.append(temp[0])
+        vy2.append(temp[1])
+
+        # kx1p = vxp
+        # kvx1p = axp
+        # ky1p = vyp
+        # kvy1p = ayp
+
+        # kx1s = vxs
+        # kvx1s = axs
+        # ky1s = vys
+        # kvy1s = ays
 
 
     # planet=True
@@ -64,7 +98,9 @@ def calcK(xp,yp,vxp,vyp,axp,ayp,xs,ys,vxs,vys,axs,ays,dt):
     # kvys = vys + ((float(1)/6) * (kvy1s+(2*kvy2s)+(2*kvy3s)+kvy4s))*dt
 
 
-    return kxp,kyp,kvxp,kvyp,kxs,kys,kvxs,kvys
+    # return kxp,kyp,kvxp,kvyp,kxs,kys,kvxs,kvys
+
+
 
 # Calculate R,theta,F and acceleration and return the acceleration
 def calcaccx(planet,xp,yp,xs,ys):
@@ -115,9 +151,9 @@ def calcRK(dt):
 
     # calculate and store the position and velocity of the orbitals using RK
 
-    ic.Orbitals.instances[0].x,ic.Orbitals.instances[0].y,ic.Orbitals.instances[0].vx, \
-    ic.Orbitals.instances[0].vy,ic.Orbitals.instances[1].x,ic.Orbitals.instances[1].y, \
-    ic.Orbitals.instances[1].vx,ic.Orbitals.instances[1].vy \
-    = calcK(xp,yp,vxp,vyp,axp,ayp,xs,ys,vxs,vys,axs,ays,dt)
+    # ic.Orbitals.instances[0].x,ic.Orbitals.instances[0].y,ic.Orbitals.instances[0].vx, \
+    # ic.Orbitals.instances[0].vy,ic.Orbitals.instances[1].x,ic.Orbitals.instances[1].y, \
+    # ic.Orbitals.instances[1].vx,ic.Orbitals.instances[1].vy \
+    # = calcK(xp,yp,vxp,vyp,axp,ayp,xs,ys,vxs,vys,axs,ays,dt)
 
-    calcK(ic.Orbitals.instances)
+    calcK(ic.Orbitals.instances, dt)
