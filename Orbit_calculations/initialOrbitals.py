@@ -10,10 +10,14 @@ class Orbitals(object):
     def __init__(self, name, mass):
         self.name = name
         self.mass = mass
+        self.accx = 0
+        self.accy = 0
+        self.rungevalues = []
         Orbitals.instances.append(self)
 
     def CM(self):
         # calculate center of mass based on amount of objects
+        # and reset the coordinate system to the center of mass
         masses = 0
         xpositions = 0
         ypositions = 0
@@ -28,6 +32,21 @@ class Orbitals(object):
         self.x = self.x - rx
         self.y = self.y -ry
 
+    def RKCM(self,j):
+        # calculate center of mass based on amount of objects
+        # and reset the coordinate system to the center of mass
+        masses = 0
+        xpositions = 0
+        ypositions = 0
+        for i in Orbitals.instances:
+            masses += i.mass
+            xpositions += i.mass * (i.x + i.rungevalues[j-1][0])
+            ypositions += i.mass * (i.y + i.rungevalues[j-1][1])
+
+        rx = xpositions/masses
+        ry = ypositions/masses
+
+        return rx,ry
 
     def InitialSpeed(self):
 
