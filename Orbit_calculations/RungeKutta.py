@@ -1,3 +1,4 @@
+from __future__ import division
 import initialOrbitals as ic
 import numpy as np
 import math
@@ -6,7 +7,7 @@ import theforacc as forc
 
 # Perform the Runge-Kutta calculations for both the star and the planet
 # def calcK(xp,yp,vxp,vyp,axp,ayp,xs,ys,vxs,vys,axs,ays,dt):
-def calcK(instances, dt)
+def calcK(instances, dt):
 
     x = []
     y = []
@@ -15,19 +16,29 @@ def calcK(instances, dt)
 
     cm_x = 0
     cm_y = 0
+    mass_tot = 0
 
     for i in range(len(instances)):
         x.append(instances[i].vx)
         y.append(instances[i].vy)
         vx.append(instances[i].ax)
         vy.append(instances[i].ay)
-    
+
+
     for i in range(len(x)):
         cm_x = instances[i].mass * x[i]
         cm_x += cm_x
+        cm_y = instances[i].mass * y[i]
+        cm_y += cm_y
+        mass_tot += instances[i].mass
 
+    cm_x = cm_x / mass_tot
+    cm_y = cm_y / mass_tot
 
-    cm_x = cm_x / 
+    for i in range(len(x)):
+        x[i] = x[i] - cm_x
+        y[i] = y[i] - cm_y
+
 
     x2 = []
     y2 = []
@@ -37,9 +48,18 @@ def calcK(instances, dt)
     for i in range(len(instances)):
         x2.append(x[i] + vx[i]*dt*0.5)
         y2.append(y[i] + vy[i]*dt*0.5)
-        temp = calcaccx(True, instances[i].x + x[i]*dt*0.5, instances[i].y + y[i]*dt*0.5 ,xs + kx1s*dt*0.5,ys + ky1s*dt*0.5)
-        vx2.append(temp[0])
-        vy2.append(temp[1])
+        ax_list = []
+        ay_list = []
+        for j in range(len(instances)):
+            if i != j:
+            temp = calcacc(instances[i], instances[i].x + x[i]*dt*0.5, instances[i].y + y[i]*dt*0.5, instances[j], instances[j].x + x[j]*dt*0.5, instances[j].y + y[j]*dt*0.5)
+            ax_list.append(temp[0])
+            ay_list.append(temp[1])
+
+        vx2.append(sum(ax_list))
+        vy2.append(sum(ay_list))
+
+
 
         # kx1p = vxp
         # kvx1p = axp
@@ -103,38 +123,56 @@ def calcK(instances, dt)
 
 
 # Calculate R,theta,F and acceleration and return the acceleration
-def calcaccx(planet,xp,yp,xs,ys):
+# def calcaccx(planet,xp,yp,xs,ys):
+def calcacc(body_1, body_1_x, body_1_y, body_2, body_2_x, body_2_y):
 
-    R = forc.calcDist(xp,yp,xs,ys)
-    theta = forc.calcTheta(xp,yp)
+    force_list = []
 
-    # check whether planet or star
-    if planet == True:
+    R1 = forc.calcDist(body_1_x, body_1_y, body_2_x, body_2_y)
+    force = forc.calcForce(R, body_1, body_2)
+    
+    theta = forc.calcTheta(body_1_x, body_1_y, body_2_x, body_2_y)    
+    axp,ayp = forc.calcAcc(body_1_x, body_1_y, force, body_1.mass, theta)
 
-        Fp = forc.calcForce(R,ic.Orbitals.instances[0].mass)
-        axp,ayp = forc.calcAcc(xp,yp,Fp,ic.Orbitals.instances[0].mass,theta)
+    return axp, ayp
 
-        return axp,ayp
-
-    if planet == False:
-
-        Fs = forc.calcForce(R,ic.Orbitals.instances[1].mass)
-        axs,ays = forc.calcAcc(xs,ys,Fs,ic.Orbitals.instances[1].mass,theta)
-
-        return axs,ays
 
 # Runge-kutta function
 def calcRK(dt):
 
+    instances = ic.Orbitals.instances
+    x = []
+    y = []
+    vx = []
+    vy = []
+
     #  get positional and velocital values from objects
-    xp = ic.Orbitals.instances[0].x
-    yp = ic.Orbitals.instances[0].y
-    vxp = ic.Orbitals.instances[0].vx
-    vyp = ic.Orbitals.instances[0].vy
-    xs = ic.Orbitals.instances[1].x
-    ys = ic.Orbitals.instances[1].y
-    vxs = ic.Orbitals.instances[1].vx
-    vys = ic.Orbitals.instances[1].vy
+    # xp = ic.Orbitals.instances[0].x
+    # yp = ic.Orbitals.instances[0].y
+    # vxp = ic.Orbitals.instances[0].vx
+    # vyp = ic.Orbitals.instances[0].vy
+    # xs = ic.Orbitals.instances[1].x
+    # ys = ic.Orbitals.instances[1].y
+    # vxs = ic.Orbitals.instances[1].vx
+    # vys = ic.Orbitals.instances[1].vy
+
+    for i in range(len(instances)):
+        x.append(instances[i].x)
+        y.append(instances[i].y)
+        vx.append(instances[i].vx)
+        vy.append(instances[i].vy)
+
+
+    for i in range(len(instances)):
+        x2.append(x[i] + vx[i]*dt*0.5)
+        y2.append(y[i] + vy[i]*dt*0.5)
+        for j in range(len(instances)):
+            if i != j:
+            temp = calcacc(instances[i], instances[i].x + x[i]*dt*0.5, instances[i].y + y[i]*dt*0.5, instances[j], instances[j].x + x[j]*dt*0.5, instances[j].y + y[j]*dt*0.5)
+            vx2.append(temp[0])
+            vy2.append(temp[1])
+
+
 
     # function calls for both distance and theta
     R = forc.calcDist(xp,yp,xs,ys)
