@@ -1,4 +1,4 @@
-import initialOrbitals as ic
+import initialOrbitals3 as ic
 import numpy as np
 import math
 
@@ -21,13 +21,13 @@ def calcAcc(x, y, F, mass, theta, x_dir, y_dir):
         ay = -ay
 
     return ax,ay
-    
+
 
 #function used to calculate theta
 def calcTheta(x1, y1, x2, y2):
     x = x2 - x1
     y = y2 - y1
-    
+
     # sets theta on 0 at the starting position
     if y == 0:
         theta = 0

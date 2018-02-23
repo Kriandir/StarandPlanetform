@@ -144,8 +144,8 @@ def calcacc(body_1, body_1_x, body_1_y, body_2, body_2_x, body_2_y):
 
     R = forc.calcDist(body_1_x, body_1_y, body_2_x, body_2_y)
     force = forc.calcForce(R, body_1, body_2)
-    
-    theta, x_dir, y_dir = forc.calcTheta(body_1_x, body_1_y, body_2_x, body_2_y)    
+
+    theta, x_dir, y_dir = forc.calcTheta(body_1_x, body_1_y, body_2_x, body_2_y)
     axp,ayp = forc.calcAcc(body_1_x, body_1_y, force, body_1.mass, theta, x_dir, y_dir)
 
     return axp, ayp

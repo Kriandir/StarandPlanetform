@@ -119,7 +119,7 @@ def Draw():
 
     dE =(englist[0] - englist[-1])/englist[0]
     print "The error for timesteps of %0.1f = %.2e" %(ic.dt,dE)
-    
+
     print xjlist, yjlist
 
     ax1.plot(xplist,yplist,label= "Planet: " + method)

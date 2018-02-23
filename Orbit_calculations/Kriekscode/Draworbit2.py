@@ -43,15 +43,20 @@ def Draw():
 
 
     ic.Orbitals.instances = []
-    Earth = ic.Planet("Planet",ic.a,ic.e,ic.q,ic.Mp)
-    Earth2 = ic.Planet("Planet",ic.a /2, ic.e,ic.q,ic.Mp)
-    Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
-
+    q= ic.Ms/1.898e27
+    Earth = ic.Planet("Planet",ic.a,ic.e,q,1.898e27)
+    # Earth2 = ic.Planet("Planet",ic.a /2, ic.e,ic.q,ic.Mp)
+    # Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
+    print ic.a
+    print ic.a *2
     Sun = ic.Star("Star",ic.Ms)
     for i in ic.Orbitals.instances:
         i.CM()
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
+    for i in ic.Orbitals.instances:
+        print i.x
+        print i.vy
 
 
 ################
@@ -102,7 +107,7 @@ def Draw():
     totallist = []
     for i in ic.Orbitals.instances:
         totallist.append(i.xlist)
-        ax1.plot(i.xlist,i.ylist)
+        ax1.plot(i.xlist,i.ylist,label = i.name)
     print len(totallist)
     ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
