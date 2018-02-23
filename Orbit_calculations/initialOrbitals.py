@@ -10,8 +10,8 @@ class Orbitals(object):
     def __init__(self, name, mass):
         self.name = name
         self.mass = mass
-        self.accx = 0
-        self.accy = 0
+        self.ax = 0
+        self.ay = 0
         self.rungevalues = []
         Orbitals.instances.append(self)
 

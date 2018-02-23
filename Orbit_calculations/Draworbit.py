@@ -44,7 +44,7 @@ def Draw():
 
     ic.Orbitals.instances = []
     Earth = ic.Planet("Planet",ic.a,ic.e,ic.q,ic.Mp)
-
+    Jupiter = ic.Planet("Jupiter", ic.a/2, ic.e, ic.q, ic.Mp)
 
     Sun = ic.Star("Star",ic.Ms)
     for i in ic.Orbitals.instances:
@@ -58,6 +58,9 @@ def Draw():
     yplist = []
     xslist = []
     yslist = []
+    xjlist = []
+    yjlist = []
+
     ################################
     # this calculates our energy and angularmomentum
     englist = []
@@ -86,6 +89,9 @@ def Draw():
             xplist.append(ic.Orbitals.instances[0].x)
             yslist.append(ic.Orbitals.instances[1].y)
             xslist.append(ic.Orbitals.instances[1].x)
+            yjlist.append(ic.Orbitals.instances[2].y)
+            xjlist.append(ic.Orbitals.instances[2].x)
+
 
         ###############################################################
 
@@ -113,10 +119,12 @@ def Draw():
 
     dE =(englist[0] - englist[-1])/englist[0]
     print "The error for timesteps of %0.1f = %.2e" %(ic.dt,dE)
-
+    
+    print xjlist, yjlist
 
     ax1.plot(xplist,yplist,label= "Planet: " + method)
-    ax1.plot(xslist,yslist, label = "Star: " + method)
+    # ax1.plot(xslist,yslist, label = "Star: " + method)
+    ax1.plot(xjlist,yjlist, label = "Jupiter " + method)
     ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
 
