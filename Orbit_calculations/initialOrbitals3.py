@@ -13,8 +13,6 @@ class Orbitals(object):
         self.ax = 0
         self.ay = 0
         self.rungevalues = []
-        self.xlist = []
-        self.ylist = []
         Orbitals.instances.append(self)
 
     def CM(self):
@@ -84,7 +82,6 @@ class Planet(Orbitals):
         self.vy = 0
         self.y = 0
         self.vx = 0
-
 
         Orbitals.__init__(self,name,mass)
 

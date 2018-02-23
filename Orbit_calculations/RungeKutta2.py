@@ -59,7 +59,7 @@ def calcK(instances,dt):
 
 # Calculate R,theta,F and acceleration and return the acceleration
 def calcaccx(x,y,j,i,instances):
-"""Function call for calculating acceleration"""
+# """Function call for calculating acceleration"""
     axlist = []
     aylist = []
     # loop through the instances that are not the instance which we called this object
