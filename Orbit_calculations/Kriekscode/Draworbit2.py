@@ -44,21 +44,22 @@ def Draw():
 
     ic.Orbitals.instances = []
     q= ic.Ms/1.898e27
-    Earth = ic.Planet("Planet",ic.a,ic.e,q,1.898e27)
-    Earth2 = ic.Planet("Planet",ic.a /2, ic.e,ic.q,ic.Mp)
+    Earth = ic.Planet("Planet",ic.a/2,ic.e,q,1.898e27)
+    Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
     # Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
-    print ic.a
-    print ic.a *2
-    print ic.dt
-    print ic.stepamount
+    print '\n'
+    print 'Radius orbit 1 = ', ic.a * 2, 'm'
+    print 'Radius orbit 2 = ', ic.a, 'm'
+    print 'Stepsize dt    = ', ic.dt, 's'
+    print 'Stepamount     = ', ic.stepamount, '\n'
     Sun = ic.Star("Star",ic.Ms)
     for i in ic.Orbitals.instances:
         i.CM()
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
     for i in ic.Orbitals.instances:
-        print i.x
-        print i.vy
+        print 'Initial x position %s = %.4e m' % (i.name, i.x)
+        print 'Initial y velocity %s = %.4e m/s' % (i.name, i.vy)
 
 
 ################
@@ -73,6 +74,8 @@ def Draw():
     while i < ic.stepamount:
         if i == 10:
             break
+
+        print '\n\nHERE COMES TIMESTEP %i' % i
 
         # determine which calculation we will perform
         if ic.calcEuler:
@@ -93,7 +96,7 @@ def Draw():
             starteng = ae.eng()
             startangmom = ae.angmom()
 
-
+        print '\n\n'
         i+=1
 
 # set the angular momentum and energy as a fraction of its initial value (percentages)

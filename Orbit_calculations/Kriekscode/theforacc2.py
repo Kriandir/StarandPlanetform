@@ -6,13 +6,26 @@ import math
 # function used to calculate the force
 def calcForce(R, mass,mass2):
     # Here the force is calculated
-    print mass
-    print mass2
+    if mass <= 10**28:
+        if mass <= 10**25 and mass2 <= 10**28:
+            print 'EARTH CENTERED'
+        elif mass >= 10**25 and mass2 <= 10**28:
+            print 'JUPITER CENTERED'
+        print 'reference mass = ', mass, 'kg'
+        print 'pulling mass   = ', mass2, 'kg'
+    
     F = ((ic.G*(mass * mass2))/(R**2))
     return F
 
 # function used to calculate the acceleration
 def calcAcc(x,y,F,mass,theta):
+
+    # if mass <= 10**25:
+    #     print 'x = %.4e' % x
+    # elif mass >= 10**25 and mass <= 10**28:
+    #     print 'x = %.4e' % x
+        # print 'reference mass = ', mass, 'kg'
+        # print 'pulling mass   = ', mass2, 'kg'
 
     ax = (math.sin(theta)*F)/mass
     # print '########################'

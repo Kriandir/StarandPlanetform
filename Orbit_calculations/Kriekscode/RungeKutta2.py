@@ -50,8 +50,8 @@ def calcK(instances,dt):
     for j in instances:
 
         if j.name == "Planet":
-            print "de xposities = %.4f" %j.x
-            print "kx1 = %.e en kx2 = %.e en kx3 = %.e en kx4 = %.e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
+            print "\nde x posities = %.4e m" % j.x
+            print "kx1 = %.4e en kx2 = %.4e en kx3 = %.4e en kx4 = %.4e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
         j.x = j.x + ((1./6)*(j.rungevalues[1][0]+(2*j.rungevalues[2][0])+(2*j.rungevalues[3][0])+j.rungevalues[4][0]))*dt
         j.y= j.y + ((1./6)*(j.rungevalues[1][1]+(2*j.rungevalues[2][1])+(2*j.rungevalues[3][1])+j.rungevalues[4][1]))*dt
         j.vx = j.vx + ((1./6)*(j.rungevalues[1][2]+(2*j.rungevalues[2][2])+(2*j.rungevalues[3][2])+j.rungevalues[4][2]))*dt
@@ -71,18 +71,30 @@ def calcaccx(x,y,j,i,instances,dt):
     for g in instances:
         if g != j:
 
+            x_reff = x
+
+            if j.name == "Planet":
+                print 'reference   mass x = %.4e' % x_reff
+                print 'pulling mass x_old = %.4e' % g.x
+                print 'pulling mass x_add = %.4e, dt = %.4e' % (g.rungevalues[i-1][0], dt)
+                print 'pulling mass x_tot = %.4e, dt = %.4e' % (g.x + g.rungevalues[i-1][0], dt)
+                # print 'difference in x    = %.4e' % x
+                # print ''
+
             x = g.x + g.rungevalues[i-1][0]*dt - x
             y = g.y + g.rungevalues[i-1][1]*dt - y
+
+
+
+
             R = forc.calcDist(x,y)
             theta = forc.calcTheta(x,y)
             F = forc.calcForce(R,j.mass,g.mass)
 
-
-
             ax,ay = forc.calcAcc(x,y,F,j.mass,theta)
 
-            if j.name == "Planet" and g.name == "Planet":
-                print "dit waren twee planeten"
+            # if j.name == "Planet" and g.name == "Planet":
+                # print "dit waren twee planeten"
                 # print R
                 # print "g.x = %.f" %x
                 # print "and acc = %.e " %ax
@@ -91,11 +103,21 @@ def calcaccx(x,y,j,i,instances,dt):
 
             axlist.append(ax)
             aylist.append(ay)
-            print axlist
             # if g.name == "Planet" and j.name == "Star":
             #
             #     print axlist
             #     print '-------------'
+
+            if j.name == "Planet":
+                # print 'reference   mass x = %.4e' % x_reff
+                # print 'pulling mass x_old = %.4e' % g.x
+                # print 'pulling mass x_add = %.4e' % g.rungevalues[i-1][0]*dt
+                # print 'pulling mass x_tot = %.4e' % g.x + g.rungevalues[i-1][0]*dt
+                print 'difference in x    = %.4e' % x
+                print ''
+
+    if j.name == "Planet":
+        print j.name, 'ax list = ', axlist, 'sum = ', np.sum(axlist), '\n'
 
     axlist = np.array(axlist)
     aylist = np.array(aylist)
