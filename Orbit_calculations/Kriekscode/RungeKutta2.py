@@ -1,3 +1,4 @@
+from __future__ import division
 import initialOrbitals as ic
 import numpy as np
 import math
@@ -11,16 +12,16 @@ def RKiter(dx,dy,x,y,dt,kuttax,kuttay,kuttadx,kuttady,j,i,instances):
     """
     Calculate the Runge-Kutta terms for the RK4-Method
     """
-#  if at the first kutta term do this:
-    if kuttax ==0 and kuttay ==0:
-        kx = dx
-        ky = dy
-        kdx,kdy = calcaccx(x + kuttax*dt,y+kuttay*dt,j,i,instances,dt)
-# if at any other kutta term do this:
-    else:
-        kx = dx + kuttadx*dt
-        ky = dy + kuttady*dt
-        kdx,kdy = calcaccx(x + kuttax*dt,y+kuttay*dt,j,i,instances,dt)
+# #  if at the first kutta term do this:
+#     if kuttax ==0 and kuttay ==0:
+#         kx = dx + kuttadx*dt
+#         ky = dy + kuttady*dt
+#         kdx,kdy = calcaccx(x + kuttax*dt,y+kuttay*dt,j,i,instances,dt)
+# # if at any other kutta term do this:
+#     else:
+    kx = dx + kuttadx*dt
+    ky = dy + kuttady*dt
+    kdx,kdy = calcaccx(x + kuttax*dt,y+kuttay*dt,j,i,instances,dt)
 
     return kx,ky,kdx,kdy
 
@@ -48,8 +49,9 @@ def calcK(instances,dt):
 # loop through all the instances and then change coordinates and list
     for j in instances:
 
-        # if j.name == "Planet":
-        print "kx1 = %.e en kx2 = %.e en kx3 = %.e en kx4 = %.e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
+        if j.name == "Planet":
+            print "de xposities = %.4f" %j.x
+            print "kx1 = %.e en kx2 = %.e en kx3 = %.e en kx4 = %.e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
         j.x = j.x + ((1./6)*(j.rungevalues[1][0]+(2*j.rungevalues[2][0])+(2*j.rungevalues[3][0])+j.rungevalues[4][0]))*dt
         j.y= j.y + ((1./6)*(j.rungevalues[1][1]+(2*j.rungevalues[2][1])+(2*j.rungevalues[3][1])+j.rungevalues[4][1]))*dt
         j.vx = j.vx + ((1./6)*(j.rungevalues[1][2]+(2*j.rungevalues[2][2])+(2*j.rungevalues[3][2])+j.rungevalues[4][2]))*dt
@@ -78,13 +80,18 @@ def calcaccx(x,y,j,i,instances,dt):
 
 
             ax,ay = forc.calcAcc(x,y,F,j.mass,theta)
+
             if j.name == "Planet" and g.name == "Planet":
-                print R
-                print "g.x = %.f" %x
-                print "and acc = %.e " %ax
-                print "######"
+                print "dit waren twee planeten"
+                # print R
+                # print "g.x = %.f" %x
+                # print "and acc = %.e " %ax
+                # print 'theta = %.f' %math.sin(theta)
+                # print "######"
+
             axlist.append(ax)
             aylist.append(ay)
+            print axlist
             # if g.name == "Planet" and j.name == "Star":
             #
             #     print axlist
@@ -92,10 +99,10 @@ def calcaccx(x,y,j,i,instances,dt):
 
     axlist = np.array(axlist)
     aylist = np.array(aylist)
-    if j.name == "Star":
-        print axlist
-        print np.sum(axlist)
-        print '------'
+    # if j.name == "Star":
+    #     print axlist
+    #     print np.sum(axlist)
+    #     print '------'
 
     return np.sum(axlist),np.sum(aylist)
 

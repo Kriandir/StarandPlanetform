@@ -53,7 +53,7 @@ class Orbitals(object):
     def InitialSpeed(self):
 
 # If object is a planet calculate its velocity
-        if self.name == 'Planet':
+        if 'Planet' in self.name:
             self.vy = (1/(1+q))*np.sqrt(G*(Ms+self.mass)/self.x)
 
 
@@ -67,10 +67,6 @@ class Orbitals(object):
                     massvsum +=i.mass * i.vy
 
             self.vy = -1/self.mass * massvsum
-
-
-
-
 
 
 

@@ -45,10 +45,12 @@ def Draw():
     ic.Orbitals.instances = []
     q= ic.Ms/1.898e27
     Earth = ic.Planet("Planet",ic.a,ic.e,q,1.898e27)
-    # Earth2 = ic.Planet("Planet",ic.a /2, ic.e,ic.q,ic.Mp)
+    Earth2 = ic.Planet("Planet",ic.a /2, ic.e,ic.q,ic.Mp)
     # Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
     print ic.a
     print ic.a *2
+    print ic.dt
+    print ic.stepamount
     Sun = ic.Star("Star",ic.Ms)
     for i in ic.Orbitals.instances:
         i.CM()
@@ -67,9 +69,10 @@ def Draw():
 
     # make sure that the initialv if using leapfrog is moved back by 0.5 dt
     initialv = False
-
     # Looping over the time steps
     while i < ic.stepamount:
+        if i == 10:
+            break
 
         # determine which calculation we will perform
         if ic.calcEuler:
@@ -109,8 +112,10 @@ def Draw():
         totallist.append(i.xlist)
         ax1.plot(i.xlist,i.ylist,label = i.name)
     print len(totallist)
-    ax2.plot(range(0,ic.stepamount),absenglist, label = method)
-    ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
+    for i in ic.Orbitals.instances:
+        ax2.scatter(i.xlist,i.ylist,label = i.name)
+    # ax2.plot(range(0,ic.stepamount),absenglist, label = method)
+    # ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
 
 
     ax1.legend(loc = 'upper left')

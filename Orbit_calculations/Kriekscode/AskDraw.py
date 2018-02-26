@@ -53,6 +53,8 @@ def asktimesteps():
             try:
                 dt = raw_input("Please insert a timestep in years:")
                 dt = float(dt)*365.25*24*3600
+                stepamount = 1e8/dt
+                ic.stepamount = int(stepamount)
                 ic.dt = int(dt)
                 break
             except(KeyboardInterrupt):
@@ -77,7 +79,7 @@ def asktimesteps():
             while True:
                 try:
                     steps = raw_input("Please insert amount of timesteps in integer:").lower()
-                    ic.stepamount = int(steps/ic.dt)
+                    ic.stepamount = int(steps/dt)
                     break
                 except(KeyboardInterrupt):
                     sys.exit(0)
@@ -90,12 +92,12 @@ def asktimesteps():
 
     if asktimes == "n":
         # asktime()
-        askeuler()
+        ic.calcRK = True
         return 0
     if asktimes != "y" and asktimes !="n":
         asktimesteps()
     # asktime()
-    askeuler()
+    ic.calcRK = True
         # if hourmonth !="n" and hourmonth !="y":
         #     asktimesteps()
 
