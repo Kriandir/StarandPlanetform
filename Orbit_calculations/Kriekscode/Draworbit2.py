@@ -43,7 +43,7 @@ def Draw():
 
 
     ic.Orbitals.instances = []
-    q= ic.Ms/1.898e27
+    q = ic.Ms/1.898e27
     Earth = ic.Planet("Planet",ic.a/2,ic.e,q,1.898e27)
     Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
     # Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
@@ -72,10 +72,9 @@ def Draw():
     initialv = False
     # Looping over the time steps
     while i < ic.stepamount:
-        if i == 10:
-            break
-
-        print '\n\nHERE COMES TIMESTEP %i' % i
+        # print '\n\nHERE COMES TIMESTEP %i' % i
+        # if i == 10:
+        #     break
 
         # determine which calculation we will perform
         if ic.calcEuler:
@@ -96,7 +95,6 @@ def Draw():
             starteng = ae.eng()
             startangmom = ae.angmom()
 
-        print '\n\n'
         i+=1
 
 # set the angular momentum and energy as a fraction of its initial value (percentages)
@@ -110,15 +108,15 @@ def Draw():
 
     dE =(englist[0] - englist[-1])/englist[0]
     print "The error for timesteps of %0.1f = %.2e" %(ic.dt,dE)
+
     totallist = []
     for i in ic.Orbitals.instances:
         totallist.append(i.xlist)
         ax1.plot(i.xlist,i.ylist,label = i.name)
-    print len(totallist)
-    for i in ic.Orbitals.instances:
-        ax2.scatter(i.xlist,i.ylist,label = i.name)
+    # for i in ic.Orbitals.instances:
+        # ax2.scatter(i.xlist,i.ylist,label = i.name)
     # ax2.plot(range(0,ic.stepamount),absenglist, label = method)
-    # ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
+    ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
 
 
     ax1.legend(loc = 'upper left')

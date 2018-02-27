@@ -49,9 +49,10 @@ def calcK(instances,dt):
 # loop through all the instances and then change coordinates and list
     for j in instances:
 
-        if j.name == "Planet":
-            print "\nde x posities = %.4e m" % j.x
-            print "kx1 = %.4e en kx2 = %.4e en kx3 = %.4e en kx4 = %.4e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
+        # if j.name == "Planet":
+            # print "\nde x posities = %.4e m" % j.x
+            # print "kx1 = %.4e en kx2 = %.4e en kx3 = %.4e en kx4 = %.4e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
+
         j.x = j.x + ((1./6)*(j.rungevalues[1][0]+(2*j.rungevalues[2][0])+(2*j.rungevalues[3][0])+j.rungevalues[4][0]))*dt
         j.y= j.y + ((1./6)*(j.rungevalues[1][1]+(2*j.rungevalues[2][1])+(2*j.rungevalues[3][1])+j.rungevalues[4][1]))*dt
         j.vx = j.vx + ((1./6)*(j.rungevalues[1][2]+(2*j.rungevalues[2][2])+(2*j.rungevalues[3][2])+j.rungevalues[4][2]))*dt
@@ -62,7 +63,7 @@ def calcK(instances,dt):
 
 
 # Calculate R,theta,F and acceleration and return the acceleration
-def calcaccx(x,y,j,i,instances,dt):
+def calcaccx(x, y, j, i, instances, dt):
 # """Function call for calculating acceleration"""
     axlist = []
     aylist = []
@@ -73,58 +74,42 @@ def calcaccx(x,y,j,i,instances,dt):
 
             x_reff = x
 
-            if j.name == "Planet":
-                print 'reference   mass x = %.4e' % x_reff
-                print 'pulling mass x_old = %.4e' % g.x
-                print 'pulling mass x_add = %.4e, dt = %.4e' % (g.rungevalues[i-1][0], dt)
-                print 'pulling mass x_tot = %.4e, dt = %.4e' % (g.x + g.rungevalues[i-1][0], dt)
-                # print 'difference in x    = %.4e' % x
-                # print ''
+            # if j.name == "Planet":
+            #     print 'reference   mass x = %.4e' % x_reff
+            #     print 'pulling mass x_old = %.4e' % g.x
+            #     print 'pulling mass x_add = %.4e, dt = %.4e' % (g.rungevalues[i-1][0], dt)
+            #     print 'pulling mass x_tot = %.4e, dt = %.4e' % (g.x + g.rungevalues[i-1][0], dt)
 
-            x = g.x + g.rungevalues[i-1][0]*dt - x
-            y = g.y + g.rungevalues[i-1][1]*dt - y
+            x_diff = g.x + g.rungevalues[i-1][0]*dt - x
+            y_diff = g.y + g.rungevalues[i-1][1]*dt - y
 
+            R = forc.calcDist(x_diff, y_diff)
+            theta = forc.calcTheta(x_diff, y_diff)
+            F = forc.calcForce(R, j.mass, g.mass)
 
-
-
-            R = forc.calcDist(x,y)
-            theta = forc.calcTheta(x,y)
-            F = forc.calcForce(R,j.mass,g.mass)
-
-            ax,ay = forc.calcAcc(x,y,F,j.mass,theta)
-
-            # if j.name == "Planet" and g.name == "Planet":
-                # print "dit waren twee planeten"
-                # print R
-                # print "g.x = %.f" %x
-                # print "and acc = %.e " %ax
-                # print 'theta = %.f' %math.sin(theta)
-                # print "######"
+            ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
 
             axlist.append(ax)
             aylist.append(ay)
-            # if g.name == "Planet" and j.name == "Star":
-            #
-            #     print axlist
-            #     print '-------------'
 
-            if j.name == "Planet":
-                # print 'reference   mass x = %.4e' % x_reff
-                # print 'pulling mass x_old = %.4e' % g.x
-                # print 'pulling mass x_add = %.4e' % g.rungevalues[i-1][0]*dt
-                # print 'pulling mass x_tot = %.4e' % g.x + g.rungevalues[i-1][0]*dt
-                print 'difference in x    = %.4e' % x
-                print ''
+            # if j.name == "Planet":
+            #     if j.mass > 10**25:
+            #         if g.mass > 10**29:
+            #             print 'SUN ON JUPITER'
+            #         elif g.mass < 10**29:
+            #             print 'EARTH ON JUPITER'
+            #     else:
+            #         if g.mass > 10**29:
+            #             print 'SUN ON EARTH'
+            #         else:
+            #             print 'JUPITER ON EARTH'
 
-    if j.name == "Planet":
-        print j.name, 'ax list = ', axlist, 'sum = ', np.sum(axlist), '\n'
+            #     print 'difference in x    = %.4e' % x_diff
+            #     print 'ax list = ', axlist, 'sum = ', np.sum(axlist), '\n'
+
 
     axlist = np.array(axlist)
     aylist = np.array(aylist)
-    # if j.name == "Star":
-    #     print axlist
-    #     print np.sum(axlist)
-    #     print '------'
 
     return np.sum(axlist),np.sum(aylist)
 

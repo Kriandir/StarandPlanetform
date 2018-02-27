@@ -3,41 +3,25 @@ import initialOrbitals as ic
 import numpy as np
 import math
 
-# function used to calculate the force
+# Function used to calculate the force
 def calcForce(R, mass,mass2):
     # Here the force is calculated
-    if mass <= 10**28:
-        if mass <= 10**25 and mass2 <= 10**28:
-            print 'EARTH CENTERED'
-        elif mass >= 10**25 and mass2 <= 10**28:
-            print 'JUPITER CENTERED'
-        print 'reference mass = ', mass, 'kg'
-        print 'pulling mass   = ', mass2, 'kg'
+    # if mass <= 10**28:
+    #     if mass <= 10**25 and mass2 <= 10**28:
+    #         print 'EARTH CENTERED'
+    #     elif mass >= 10**25 and mass2 <= 10**28:
+    #         print 'JUPITER CENTERED'
+    #     print 'reference mass = ', mass, 'kg'
+    #     print 'pulling mass   = ', mass2, 'kg'
     
     F = ((ic.G*(mass * mass2))/(R**2))
     return F
 
-# function used to calculate the acceleration
+# Function used to calculate the acceleration
 def calcAcc(x,y,F,mass,theta):
 
-    # if mass <= 10**25:
-    #     print 'x = %.4e' % x
-    # elif mass >= 10**25 and mass <= 10**28:
-    #     print 'x = %.4e' % x
-        # print 'reference mass = ', mass, 'kg'
-        # print 'pulling mass   = ', mass2, 'kg'
-
     ax = (math.sin(theta)*F)/mass
-    # print '########################'
-    # print theta
-    # print ax
-    # print '#############################'
     ay = (math.cos(theta)*F)/mass
-
-    # print '########################'
-    # print "y = woop woop: %.f" %y
-    # print "ay = derp derp: %.f" %ay
-    # print '#############################'
 
     # flips the acceleration if the object is on the other side of the ellipse
     if x < 0:
@@ -48,19 +32,13 @@ def calcAcc(x,y,F,mass,theta):
     return ax,ay
 
 
-#function used to calculate theta
+# Function used to calculate theta
 def calcTheta(x,y):
     # sets theta on 90 at the starting position
     if y == 0:
         theta = math.pi/2
     else:
-        # print "##############"
-        # print "x = %.f" %x
-        # print "y = %.f" % y
-        # print '###############'
         theta = math.atan(np.sqrt(x**2)/(np.sqrt(y**2)))
-        # print theta/math.pi
-        # print '$$$$$$$$$$$$$$$$$'
 
     return theta
 

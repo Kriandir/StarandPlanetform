@@ -17,7 +17,6 @@ def eng():
 # small formula for calculating the m1*m2
     Mass = 1
     for i in range (len(ic.Orbitals.instances)):
-
         Mass *= ic.Orbitals.instances[i].mass
 
 # calculating the potential and kinetic energy of the system
