@@ -46,7 +46,7 @@ def Draw():
     q = ic.Ms/1.898e27
     Earth = ic.Planet("Planet",ic.a/2,ic.e,q,1.898e27)
     Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
-    # Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
+    Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
     print '\n'
     print 'Radius orbit 1 = ', ic.a * 2, 'm'
     print 'Radius orbit 2 = ', ic.a, 'm'
@@ -115,7 +115,7 @@ def Draw():
         ax1.plot(i.xlist,i.ylist,label = i.name)
     # for i in ic.Orbitals.instances:
         # ax2.scatter(i.xlist,i.ylist,label = i.name)
-    # ax2.plot(range(0,ic.stepamount),absenglist, label = method)
+    ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
 
 

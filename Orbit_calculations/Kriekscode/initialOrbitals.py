@@ -1,5 +1,6 @@
 
 import numpy as np
+import inspect
 
 
 # parent class for orbitals
@@ -53,13 +54,13 @@ class Orbitals(object):
     def InitialSpeed(self):
 
 # If object is a planet calculate its velocity
-        if 'Planet' in self.name:
+        if isinstance(self,Planet):
             self.vy = (1/(1+q))*np.sqrt(G*(Ms+self.mass)/self.x)
 
 
 
 #  IF object is a star calculate its velocity
-        if self.name == "Star":
+        if isinstance(self,Star):
             massvsum = 0
 
             for i in Orbitals.instances:

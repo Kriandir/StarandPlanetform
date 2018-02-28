@@ -72,7 +72,7 @@ def calcaccx(x, y, j, i, instances, dt):
     for g in instances:
         if g != j:
 
-            x_reff = x
+            # x_reff = x
 
             # if j.name == "Planet":
             #     print 'reference   mass x = %.4e' % x_reff
