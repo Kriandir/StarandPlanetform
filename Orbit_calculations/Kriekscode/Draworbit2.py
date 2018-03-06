@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import time
 import sys
 import matplotlib.cm as cm
+import os
 
 
 # ask which method to use and if we want to time
@@ -20,6 +21,7 @@ except(KeyboardInterrupt):
     sys.exit(0)
 
 def Draw():
+    save = True
 
     if ic.calcEuler:
         name = "Euler"
@@ -135,13 +137,24 @@ def Draw():
     #     ax2.scatter(xs10list[i],ys10list[i],color=colorz)
     ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
+    cwd = os.getcwd()
+    newdir = cwd+"/"+"dt_of_"+str(ic.dt)+"years_of"+str(ic.stepamount*ic.dt/(365.25*25*3600))
+    try:
+        os.mkdir(newdir)
+    except:
+        pass
 
-
+    os.chdir(newdir)
     ax1.legend(loc = 'upper left')
     ax2.legend(loc = 'upper left')
     ax3.legend(loc = 'upper left')
     plt.legend()
-
-    plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
-
+    if save:
+        np.save("Orbitals.npy",ic.Orbitals.instances)
+        np.save("englist.npy",absenglist)
+        np.save("anglist.npy",absangmomlist)
+        np.save("stepamount.npy",ic.stepamount)
+        plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
+    else:
+        plt.show()
 Draw()
