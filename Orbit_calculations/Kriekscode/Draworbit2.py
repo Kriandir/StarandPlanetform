@@ -142,6 +142,6 @@ def Draw():
     ax3.legend(loc = 'upper left')
     plt.legend()
 
-    plt.show()
+    plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
 
 Draw()
