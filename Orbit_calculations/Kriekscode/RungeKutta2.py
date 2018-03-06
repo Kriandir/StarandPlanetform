@@ -21,7 +21,7 @@ def RKiter(dx,dy,x,y,dt,kuttax,kuttay,kuttadx,kuttady,j,i,instances):
 #     else:
     kx = dx + kuttadx*dt
     ky = dy + kuttady*dt
-    kdx,kdy = calcaccx(x + kuttax*dt,y+kuttay*dt,j,i,instances,dt)
+    kdx,kdy = calcaccx(x + kuttax*dt,y+kuttay*dt,j,i,instances,dt,dx + kuttadx*dt,dy + kuttady*dt)
 
     return kx,ky,kdx,kdy
 
@@ -63,7 +63,7 @@ def calcK(instances,dt):
 
 
 # Calculate R,theta,F and acceleration and return the acceleration
-def calcaccx(x, y, j, i, instances, dt):
+def calcaccx(x, y, j, i, instances, dt,vx,vy):
 # """Function call for calculating acceleration"""
     axlist = []
     aylist = []
@@ -107,7 +107,21 @@ def calcaccx(x, y, j, i, instances, dt):
             #     print 'difference in x    = %.4e' % x_diff
             #     print 'ax list = ', axlist, 'sum = ', np.sum(axlist), '\n'
 
-
+    if j.name == "Earth":
+        agasx,agasy = forc.calcDrag(x,y,j,vx,vy,dt)
+        axlist.append(agasx)
+        aylist.append(agasy)
+        # print 'vx =:'
+        # print vx
+        #
+        # print "vy =:"
+        # print vy
+        # print '################'
+        # print "xlist =:"
+        # print axlist[2]
+        # print "ylist =:"
+        # print aylist[2]
+        # print '#####################'
     axlist = np.array(axlist)
     aylist = np.array(aylist)
 

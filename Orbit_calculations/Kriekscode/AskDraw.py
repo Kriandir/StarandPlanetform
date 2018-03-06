@@ -64,30 +64,34 @@ def asktimesteps():
                 continue
 
 
+
+    asksteps = raw_input("would you like to insert stepamount?(y/n): ").lower()
+    # if asksteps =='y' or asksteps =='n':
+    #     break
+# except(KeyboardInterrupt):
+#     sys.exit(0)
+# except:
+#     continue
+
+
+    if asksteps =='y':
         while True:
             try:
-                asksteps = raw_input("would you like to insert stepamount?(y/n): ").lower()
-                if asksteps =='y' or asksteps =='n':
-                    break
+                print 'yo'
+                steps = raw_input("Please insert integration time in integer years:")
+                ic.tstop = 10/dt
+                print ic.tstop
+                steps = float(steps)*365.25*24*3600
+                ic.stepamount = int(steps/dt)
+                print ic.stepamount
+                break
             except(KeyboardInterrupt):
                 sys.exit(0)
             except:
                 continue
 
-
-        if asksteps =='y':
-            while True:
-                try:
-                    steps = raw_input("Please insert amount of timesteps in integer:").lower()
-                    ic.stepamount = int(steps/dt)
-                    break
-                except(KeyboardInterrupt):
-                    sys.exit(0)
-                except:
-                    continue
-
-        if asksteps =='n':
-            ic.stepamount = int(1e8/ic.dt)
+    if asksteps =='n':
+        ic.stepamount = int(1e8/ic.dt)
 
 
     if asktimes == "n":

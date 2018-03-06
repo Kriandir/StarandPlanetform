@@ -34,7 +34,7 @@ class Orbitals(object):
         self.x = self.x - rx
         self.y = self.y -ry
 
-    def RKCM(self,j,dt):
+    def RKCM(self,dt):
         # calculate center of mass based on amount of objects
         # and reset the coordinate system to the center of mass
         masses = 0

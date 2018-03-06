@@ -35,7 +35,7 @@ class Orbitals(object):
         self.x = self.x - rx
         self.y = self.y -ry
 
-    def RKCM(self,j,dt):
+    def RKCM(self,dt):
         # calculate center of mass based on amount of objects
         # and reset the coordinate system to the center of mass
         masses = 0
@@ -43,8 +43,8 @@ class Orbitals(object):
         ypositions = 0
         for i in Orbitals.instances:
             masses += i.mass
-            xpositions += i.mass * (i.x + i.rungevalues[j-1][0]*dt)
-            ypositions += i.mass * (i.y + i.rungevalues[j-1][1]*dt)
+            xpositions += i.mass * (i.x + i.rungevalues[-1][0]*dt)
+            ypositions += i.mass * (i.y + i.rungevalues[-1][1]*dt)
 
         rx = xpositions/masses
         ry = ypositions/masses
@@ -107,11 +107,12 @@ stepamount = int(1e8/dt)
 a =1.496e11
 e =0.0167
 G = 6.67408e-11
-
+tstop = 10/(dt)
 directdraw  = False
 calcEuler = False
 calcLeap = False
 calcRK = False
+gashead = 0.1
 calcAll = False
 timer = False
 hourmonth = False

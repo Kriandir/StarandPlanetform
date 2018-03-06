@@ -13,7 +13,7 @@ def calcForce(R, mass,mass2):
     #         print 'JUPITER CENTERED'
     #     print 'reference mass = ', mass, 'kg'
     #     print 'pulling mass   = ', mass2, 'kg'
-    
+
     F = ((ic.G*(mass * mass2))/(R**2))
     return F
 
@@ -47,3 +47,56 @@ def calcDist(x,y):
 
     R = np.sqrt(x**2 + y**2)
     return R
+
+def calcKepp(R):
+    vkep = np.sqrt(ic.G*(ic.Ms)/R)
+
+    return vkep
+
+def Dragacc(v,vgas,orbital,e):
+    return e*(v-vgas)/(ic.tstop*orbital.mass)
+
+def calcDrag(x,y,orbital,vx,vy,dt):
+    """Calculate drag Earth experiences"""
+    # print orbital.name
+
+    ex = 1
+    ey = 1
+
+    rx,ry = orbital.RKCM(dt)
+    xcm = rx-x
+    ycm = ry-y
+    R = calcDist(xcm,ycm)
+    theta = calcTheta(x,y)
+    vkep = calcKepp(R)
+    vhw = ic.gashead * vkep
+    vkep = vkep - vhw
+    vkepx = math.cos(theta)*vkep
+    vkepy = math.sin(theta)*vkep
+
+
+    if x <0:
+        ey = -ey
+        if y >0:
+            ex = -ex
+
+    if x >0:
+        if y>0:
+            ex = -ex
+
+    vgasx = (vkepx)*ex
+
+    vgasy = (vkepy)*ey
+    #
+    # print"##########################################"
+    # print "vgasx =" + str(vgasx)
+    # print "vgasy =" + str(vgasy)
+    # print"##########################################"
+    # print "vx = " + str(vx)
+    # print "vy = " + str(vy)
+    # print "_______________________________________"
+    e = -1
+    ax = Dragacc(vx,vgasx,orbital,e)
+    ay = Dragacc(vy,vgasy,orbital,e)
+
+    return ax,ay

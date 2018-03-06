@@ -10,7 +10,7 @@ import math
 import matplotlib.pyplot as plt
 import time
 import sys
-
+import matplotlib.cm as cm
 
 
 # ask which method to use and if we want to time
@@ -44,9 +44,9 @@ def Draw():
 
     ic.Orbitals.instances = []
     q = ic.Ms/1.898e27
-    Earth = ic.Planet("Planet",ic.a/2,ic.e,q,1.898e27)
-    Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
-    Earth2 = ic.Planet("Planet",ic.a *2, ic.e,ic.q,ic.Mp)
+    Earth = ic.Planet("Planet",ic.a,ic.e,q,1.898e27)
+    # Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
+    Earth2 = ic.Planet("Earth",ic.a *2, ic.e,ic.q,ic.Mp)
     print '\n'
     print 'Radius orbit 1 = ', ic.a * 2, 'm'
     print 'Radius orbit 2 = ', ic.a, 'm'
@@ -109,12 +109,30 @@ def Draw():
     dE =(englist[0] - englist[-1])/englist[0]
     print "The error for timesteps of %0.1f = %.2e" %(ic.dt,dE)
 
-    totallist = []
+    x10list=[]
+    y10list = []
+    xs10list=[]
+    ys10list = []
     for i in ic.Orbitals.instances:
-        totallist.append(i.xlist)
+        # if i.name == "Earth":
+        #     for j in range(len(i.xlist)):
+        #         if j %10 ==0:
+        #             x10list.append(i.xlist[j])
+        #             y10list.append(i.ylist[j])
+        # if i.name == "Star":
+        #     for j in range(len(i.xlist)):
+        #         if j %10 ==0:
+        #             xs10list.append(i.xlist[j])
+        #             ys10list.append(i.ylist[j])
+
+
         ax1.plot(i.xlist,i.ylist,label = i.name)
-    # for i in ic.Orbitals.instances:
-        # ax2.scatter(i.xlist,i.ylist,label = i.name)
+        # ax2.scatter(i.xlist,i.ylist,label=i.name)
+    # colors = iter(cm.rainbow(np.linspace(0, 1, len(x10list))))
+    # for i in range(len(x10list)):
+    #     colorz = next(colors)
+    #     ax2.scatter(x10list[i],y10list[i],color=colorz,label= str(i*10) +"th step")
+    #     ax2.scatter(xs10list[i],ys10list[i],color=colorz)
     ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
 
