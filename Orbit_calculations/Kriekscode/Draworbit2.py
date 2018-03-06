@@ -139,7 +139,7 @@ def Draw():
     ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
     cwd = os.getcwd()
-    newdir = cwd+"/"+"dt_of_"+str(ic.dt)+"years_of"+str(ic.stepamount*ic.dt/(365.25*25*3600))
+    newdir = cwd+"/"+"dt_of_"+str(int(ic.dt))+"years_of"+str(int(ic.stepamount*ic.dt/(365.25*25*3600)))
     try:
         os.mkdir(newdir)
     except:
@@ -155,6 +155,7 @@ def Draw():
         np.save("englist.npy",absenglist)
         np.save("anglist.npy",absangmomlist)
         np.save("stepamount.npy",ic.stepamount)
+        print 'saving under:' + str(newdir)
         plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
     else:
         plt.show()

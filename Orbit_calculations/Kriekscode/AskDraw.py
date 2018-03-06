@@ -80,7 +80,7 @@ def asktimesteps():
                 print 'yo'
                 steps = raw_input("Please insert integration time in integer years:")
                 # set the timestop on 10 years and see this is most likely faulty
-                ic.tstop = 10/dt
+                ic.tstop = 10./(365.25*24*3600)
                 print ic.tstop
                 steps = float(steps)*365.25*24*3600
                 ic.stepamount = int(steps/dt)
