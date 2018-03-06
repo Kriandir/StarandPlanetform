@@ -21,6 +21,7 @@ except(KeyboardInterrupt):
     sys.exit(0)
 
 def Draw():
+    # decide if save or plot figure
     save = True
 
     if ic.calcEuler:
