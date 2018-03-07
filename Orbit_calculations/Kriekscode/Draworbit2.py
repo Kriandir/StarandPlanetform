@@ -12,7 +12,7 @@ import time
 import sys
 import matplotlib.cm as cm
 import os
-
+AU = 1.5e11 
 
 # ask which method to use and if we want to time
 try:
@@ -22,7 +22,7 @@ except(KeyboardInterrupt):
 
 def Draw():
     # decide if save or plot figure
-    save = True
+    save = False
 
     if ic.calcEuler:
         name = "Euler"
@@ -51,8 +51,8 @@ def Draw():
     # Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
     Earth2 = ic.Planet("Earth",ic.a *2, ic.e,ic.q,ic.Mp)
     print '\n'
-    print 'Radius orbit 1 = ', ic.a * 2, 'm'
-    print 'Radius orbit 2 = ', ic.a, 'm'
+    print 'Radius orbit 1 = ', ic.a * 2/ AU, 'AU'
+    print 'Radius orbit 2 = ', ic.a/ AU, 'AU'
     print 'Stepsize dt    = ', ic.dt, 's'
     print 'Stepamount     = ', ic.stepamount, '\n'
     Sun = ic.Star("Star",ic.Ms)
@@ -61,7 +61,7 @@ def Draw():
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
     for i in ic.Orbitals.instances:
-        print 'Initial x position %s = %.4e m' % (i.name, i.x)
+        print 'Initial x position %s = %.4e au' % (i.name, i.x/AU)
         print 'Initial y velocity %s = %.4e m/s' % (i.name, i.vy)
 
 

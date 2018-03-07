@@ -102,12 +102,13 @@ class Star(Orbitals):
 Mp = 5.972e24
 Ms = 1.989e30
 q = Mp/Ms
-dt = 3600*24*3
-stepamount = int(1e8/dt)
+dt = 3600*24*365.25*0.01
+stepamount = int((10*365.25*3600*24)/dt)
+print "in intial orbitals =" +str(stepamount)
 a =1.496e11
 e =0.0167
 G = 6.67408e-11
-tstop = 10./(365.25*24*3600)
+tstop = 10.*(365.25*24*3600)
 directdraw  = False
 calcEuler = False
 calcLeap = False

@@ -92,7 +92,8 @@ def asktimesteps():
                 continue
 
     if asksteps =='n':
-        ic.stepamount = int(1e8/ic.dt)
+        ic.calcRK = True
+        return 0
 
 
     if asktimes == "n":

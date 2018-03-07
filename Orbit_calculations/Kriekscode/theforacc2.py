@@ -53,8 +53,8 @@ def calcKepp(R):
 
     return vkep
 
-def Dragacc(v,vgas,orbital,e):
-    return e*(v-vgas)/(ic.tstop*orbital.mass)
+def Dragacc(v,vgas,e):
+    return e*(v-vgas)/(ic.tstop)
 
 def calcDrag(x,y,orbital,vx,vy,dt):
     """Calculate drag Earth experiences"""
@@ -99,7 +99,7 @@ def calcDrag(x,y,orbital,vx,vy,dt):
 
     # Calculate acceleration as a result of the dragforce on the planet
     e = -1
-    ax = Dragacc(vx,vgasx,orbital,e)
-    ay = Dragacc(vy,vgasy,orbital,e)
+    ax = Dragacc(vx,vgasx,e)
+    ay = Dragacc(vy,vgasy,e)
 
     return ax,ay
