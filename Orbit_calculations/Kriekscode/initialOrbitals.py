@@ -104,7 +104,6 @@ Ms = 1.989e30
 q = Mp/Ms
 dt = 3600*24*365.25*0.01
 stepamount = int((10*365.25*3600*24)/dt)
-print "in intial orbitals =" +str(stepamount)
 a =1.496e11
 e =0.0167
 G = 6.67408e-11

@@ -13,6 +13,7 @@ import sys
 import matplotlib.cm as cm
 import os
 AU = 1.5e11 
+Mj = 1.898e27
 
 # ask which method to use and if we want to time
 try:
@@ -23,13 +24,8 @@ except(KeyboardInterrupt):
 def Draw():
     # decide if save or plot figure
     save = False
+    colorplot = False
 
-    if ic.calcEuler:
-        name = "Euler"
-        method = "EU"
-    if ic.calcLeap:
-        method = "LF"
-        name = "Leapfrog"
     if ic.calcRK:
         method = "RK"
         name = "Runge-Kutta"
@@ -46,22 +42,23 @@ def Draw():
 
 
     ic.Orbitals.instances = []
-    q = ic.Ms/1.898e27
-    Earth = ic.Planet("Planet",ic.a,ic.e,q,1.898e27)
-    # Earth2 = ic.Planet("Planet",ic.a, ic.e,ic.q,ic.Mp)
-    Earth2 = ic.Planet("Earth",ic.a *2, ic.e,ic.q,ic.Mp)
+    q = ic.Ms/Mj			# Mass ratio sun / jup
+    Earth = ic.Planet("Planet", ic.a, ic.e, q, Mj)
+    Earth2 = ic.Planet("Earth",ic.a * 2, ic.e, ic.q, ic.Mp)
+
     print '\n'
     print 'Radius orbit 1 = ', ic.a * 2/ AU, 'AU'
     print 'Radius orbit 2 = ', ic.a/ AU, 'AU'
     print 'Stepsize dt    = ', ic.dt, 's'
     print 'Stepamount     = ', ic.stepamount, '\n'
+
     Sun = ic.Star("Star",ic.Ms)
     for i in ic.Orbitals.instances:
         i.CM()
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
     for i in ic.Orbitals.instances:
-        print 'Initial x position %s = %.4e au' % (i.name, i.x/AU)
+        print 'Initial x position %s = %.4e AU' % (i.name, i.x/AU)
         print 'Initial y velocity %s = %.4e m/s' % (i.name, i.vy)
 
 
@@ -72,24 +69,13 @@ def Draw():
     i = 0
 
     # make sure that the initialv if using leapfrog is moved back by 0.5 dt
-    initialv = False
     # Looping over the time steps
     while i < ic.stepamount:
-        # print '\n\nHERE COMES TIMESTEP %i' % i
-        # if i == 10:
-        #     break
-
         # determine which calculation we will perform
-        if ic.calcEuler:
-            k.calcEuler(ic.dt)
-        if ic.calcLeap:
-            initialv = lf.calcLeap(ic.dt,initialv)
-        if ic.calcRK:
-            u.calcRK(ic.dt)
+        u.calcRK(ic.dt)
 
 
         # calculate energy and angular momentum
-
         englist.append(ae.eng())
         angmomlist.append(ae.angmom())
 
@@ -106,11 +92,6 @@ def Draw():
     for i in range(len(englist)):
         absenglist.append(englist[i]/starteng)
         absangmomlist.append(angmomlist[i]/startangmom)
-
-    # print Energydifference error
-
-    dE =(englist[0] - englist[-1])/englist[0]
-    print "The error for timesteps of %0.1f = %.2e" %(ic.dt,dE)
 
     x10list=[]
     y10list = []
@@ -130,7 +111,7 @@ def Draw():
 
 
         ax1.plot(i.xlist,i.ylist,label = i.name)
-        # ax2.scatter(i.xlist,i.ylist,label=i.name)
+    
     # colors = iter(cm.rainbow(np.linspace(0, 1, len(x10list))))
     # for i in range(len(x10list)):
     #     colorz = next(colors)

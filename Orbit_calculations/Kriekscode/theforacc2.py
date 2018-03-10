@@ -6,14 +6,6 @@ import math
 # Function used to calculate the force
 def calcForce(R, mass,mass2):
     # Here the force is calculated
-    # if mass <= 10**28:
-    #     if mass <= 10**25 and mass2 <= 10**28:
-    #         print 'EARTH CENTERED'
-    #     elif mass >= 10**25 and mass2 <= 10**28:
-    #         print 'JUPITER CENTERED'
-    #     print 'reference mass = ', mass, 'kg'
-    #     print 'pulling mass   = ', mass2, 'kg'
-
     F = ((ic.G*(mass * mass2))/(R**2))
     return F
 
@@ -53,10 +45,10 @@ def calcKepp(R):
 
     return vkep
 
-def Dragacc(v,vgas,e):
-    return e*(v-vgas)/(ic.tstop)
+def Dragacc(v, vgas):
+    return -1.*(v-vgas)/(ic.tstop)
 
-def calcDrag(x,y,orbital,vx,vy,dt):
+def calcDrag(x, y, orbital, vx, vy, dt):
     """Calculate drag Earth experiences"""
 
 
@@ -73,33 +65,23 @@ def calcDrag(x,y,orbital,vx,vy,dt):
     vgasx = math.cos(theta)*vgas
     vgasy = math.sin(theta)*vgas
 
-#Set the velocity of gas in the proper direction
+    # Set the velocity of gas in the proper direction
     ex = 1
     ey = 1
-    if x <0:
+    if x < 0:
         ey = -ey
-        if y >0:
+        if y > 0:
             ex = -ex
 
-    if x >0:
-        if y>0:
+    if x > 0:
+        if y > 0:
             ex = -ex
 
     vgasx = (vgasx)*ex
-
     vgasy = (vgasy)*ey
-    #
-    # print"##########################################"
-    # print "vgasx =" + str(vgasx)
-    # print "vgasy =" + str(vgasy)
-    # print"##########################################"
-    # print "vx = " + str(vx)
-    # print "vy = " + str(vy)
-    # print "_______________________________________"
 
     # Calculate acceleration as a result of the dragforce on the planet
-    e = -1
-    ax = Dragacc(vx,vgasx,e)
-    ay = Dragacc(vy,vgasy,e)
+    ax = Dragacc(vx,vgasx)
+    ay = Dragacc(vy,vgasy)
 
     return ax,ay
