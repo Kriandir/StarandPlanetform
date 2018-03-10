@@ -21,6 +21,15 @@ try:
 except(KeyboardInterrupt):
     sys.exit(0)
 
+def calc_resonance_orbits(P_fraction):
+    r = P_fraction**(2. / 3) * ic.a
+    x = []
+    y = []
+    for theta in np.linspace(0, (2*np.pi), num=1000):
+        x.append(r * np.cos(theta))
+        y.append(r * np.sin(theta))
+    return x, y
+
 def Draw():
     # decide if save or plot figure
     save = False
@@ -31,20 +40,34 @@ def Draw():
         name = "Runge-Kutta"
 
     # define the figure
-    fig = plt.figure("2 body system", figsize=(20,10))
-    ax1 = fig.add_subplot(311)
-    ax1.set_xlabel("x (m)")
-    ax1.set_ylabel("y (m)")
-    ax2 = fig.add_subplot(312)
-    ax2.set_ylabel("Energydifference in %")
-    ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
-    ax3.set_ylabel("Angularmomentum in  %")
+    fig = plt.figure("2 body system", figsize=(10,20))
+    # ax1 = fig.add_subplot(311)
+    ax1 = fig.add_subplot(211)
+    ax1.set_xlabel("x (AU)")
+    ax1.set_ylabel("y (AU)")
+    ax1.set_title('hw = %.1f percent , runtime = %.f yrs' % (ic.gashead * 100, ic.stepamount / 100. ))
 
+    ax2 = fig.add_subplot(212)
+    ax2.set_xlabel('Time (yrs)')
+    ax2.set_ylabel('Distance to sun (AU)')     
+    # ax2.set_ylabel("Energydifference in %")
+    # ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
+    # ax3.set_ylabel("Angularmomentum in  %")
 
     ic.Orbitals.instances = []
     q = ic.Ms/Mj			# Mass ratio sun / jup
     Earth = ic.Planet("Planet", ic.a, ic.e, q, Mj)
     Earth2 = ic.Planet("Earth",ic.a * 2, ic.e, ic.q, ic.Mp)
+
+    hws = np.arange(3.0, 3.2, 0.05)
+    hws = hws / 100.
+    test_masses = []
+
+    for i in range(len(hws)):
+        test_masses.append(ic.PlanetHW("HW_%.4f" % hws[i], ic.a*2, ic.e, ic.q, ic.Mp, hws[i]))
+
+        print test_masses[i].headwind
+
 
     print '\n'
     print 'Radius orbit 1 = ', ic.a * 2/ AU, 'AU'
@@ -53,8 +76,13 @@ def Draw():
     print 'Stepamount     = ', ic.stepamount, '\n'
 
     Sun = ic.Star("Star",ic.Ms)
+
     for i in ic.Orbitals.instances:
-        i.CM()
+        if 'HW' in i.name:
+            continue
+        else:    
+            i.CM()
+
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
     for i in ic.Orbitals.instances:
@@ -97,6 +125,9 @@ def Draw():
     y10list = []
     xs10list=[]
     ys10list = []
+
+    res_colors = ['black', 'black', 'black', '#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+    k = 0
     for i in ic.Orbitals.instances:
         # if i.name == "Earth":
         #     for j in range(len(i.xlist)):
@@ -110,15 +141,27 @@ def Draw():
         #             ys10list.append(i.ylist[j])
 
 
-        ax1.plot(i.xlist,i.ylist,label = i.name)
+        ax1.plot(np.array(i.xlist) / ic.a, np.array(i.ylist) / ic.a, label = i.name, c=res_colors[k])
+
+        # if i.name == "Earth":
+        #     dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
+        #     ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun)
+
+
+        if 'HW' in i.name:
+            dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
+            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label=i.name, c=res_colors[k])
+
+        k += 1
+
     
     # colors = iter(cm.rainbow(np.linspace(0, 1, len(x10list))))
     # for i in range(len(x10list)):
     #     colorz = next(colors)
     #     ax2.scatter(x10list[i],y10list[i],color=colorz,label= str(i*10) +"th step")
     #     ax2.scatter(xs10list[i],ys10list[i],color=colorz)
-    ax2.plot(range(0,ic.stepamount),absenglist, label = method)
-    ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
+    # ax2.plot(range(0,ic.stepamount),absenglist, label = method)
+    # ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
     cwd = os.getcwd()
     newdir = cwd+"/"+"dt_of_"+str(int(ic.dt))+"years_of"+str(int(ic.stepamount*ic.dt/(365.25*25*3600)))
     try:
@@ -129,8 +172,23 @@ def Draw():
     os.chdir(newdir)
     ax1.legend(loc = 'upper left')
     ax2.legend(loc = 'upper left')
-    ax3.legend(loc = 'upper left')
+    # ax3.legend(loc = 'upper left')
+
+    # add resonance orbits
+    resonances = [0.5, 2. / 3, 3. / 4, 2, 1.5, 4./ 3]
+    res_colors = ['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+    col = 0
+
+    for frac in resonances:
+        x, y = calc_resonance_orbits(frac)
+        ax1.plot(np.array(x) / ic.a, np.array(y) / ic.a, c=res_colors[col], ls='dotted', label='Pe/Pj = %.1f'%frac)
+        ax2.axhline(np.sqrt(np.array(x[0])**2 + np.array(y[0])**2) / ic.a, c=res_colors[col], ls='dotted', label='Pe/Pj = %.1f'%frac)
+        col += 1
+
+
+    # plt.savefig('plot_with_hw_'+str(ic.gashead * 100)+'percent_and_runtime_'+str(ic.stepamount / 100.)+'yrs.png')
     plt.legend()
+
     if save:
         np.save("Orbitals.npy",ic.Orbitals.instances)
         np.save("englist.npy",absenglist)

@@ -49,9 +49,8 @@ def calcK(instances,dt):
 # loop through all the instances and then change coordinates and list
     for j in instances:
 
-        # if j.name == "Planet":
-            # print "\nde x posities = %.4e m" % j.x
-            # print "kx1 = %.4e en kx2 = %.4e en kx3 = %.4e en kx4 = %.4e" %(j.rungevalues[1][2],j.rungevalues[2][2],j.rungevalues[3][2],j.rungevalues[4][2])
+        # if 'HW' in j.name:
+            # continue
 
         j.x = j.x + ((1./6)*(j.rungevalues[1][0]+(2*j.rungevalues[2][0])+(2*j.rungevalues[3][0])+j.rungevalues[4][0]))*dt
         j.y= j.y + ((1./6)*(j.rungevalues[1][1]+(2*j.rungevalues[2][1])+(2*j.rungevalues[3][1])+j.rungevalues[4][1]))*dt
@@ -69,61 +68,60 @@ def calcaccx(x, y, j, i, instances, dt,vx,vy):
     aylist = []
     # loop through the instances that are not the instance which we called this object
     # and calculate the Force ,R theta and acceleration from having put the instance at the coordinate (0,0)
+ 
     for g in instances:
         if g != j:
+            if 'HW' in g.name:
+                continue
+            else:
+                x_diff = g.x + g.rungevalues[i-1][0]*dt - x
+                y_diff = g.y + g.rungevalues[i-1][1]*dt - y
 
-            # x_reff = x
+                R = forc.calcDist(x_diff, y_diff)
+                theta = forc.calcTheta(x_diff, y_diff)
+                F = forc.calcForce(R, j.mass, g.mass)
 
-            # if j.name == "Planet":
-            #     print 'reference   mass x = %.4e' % x_reff
-            #     print 'pulling mass x_old = %.4e' % g.x
-            #     print 'pulling mass x_add = %.4e, dt = %.4e' % (g.rungevalues[i-1][0], dt)
-            #     print 'pulling mass x_tot = %.4e, dt = %.4e' % (g.x + g.rungevalues[i-1][0], dt)
+                ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
 
-            x_diff = g.x + g.rungevalues[i-1][0]*dt - x
-            y_diff = g.y + g.rungevalues[i-1][1]*dt - y
-
-            R = forc.calcDist(x_diff, y_diff)
-            theta = forc.calcTheta(x_diff, y_diff)
-            F = forc.calcForce(R, j.mass, g.mass)
-
-            ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
-
-            axlist.append(ax)
-            aylist.append(ay)
-
-            # if j.name == "Planet":
-            #     if j.mass > 10**25:
-            #         if g.mass > 10**29:
-            #             print 'SUN ON JUPITER'
-            #         elif g.mass < 10**29:
-            #             print 'EARTH ON JUPITER'
-            #     else:
-            #         if g.mass > 10**29:
-            #             print 'SUN ON EARTH'
-            #         else:
-            #             print 'JUPITER ON EARTH'
-
-            #     print 'difference in x    = %.4e' % x_diff
-            #     print 'ax list = ', axlist, 'sum = ', np.sum(axlist), '\n'
+                axlist.append(ax)
+                aylist.append(ay)
 
     if j.name == "Earth":
         agasx,agasy = forc.calcDrag(x,y,j,vx,vy,dt)
         axlist.append(agasx)
         aylist.append(agasy)
-        # print 'vx =:'
-        # print vx
-        #
-        # print "vy =:"
-        # print vy
-        # print '################'
-        # print "xlist =:"
-        # print axlist[2]
-        # print "ylist =:"
-        # print aylist[2]
-        # print '#####################'
+
+    if 'HW' in j.name:
+        agasx,agasy = forc.calcDragHW(x,y,j,vx,vy,dt, j.headwind)
+        axlist.append(agasx)
+        aylist.append(agasy)        
+
     axlist = np.array(axlist)
     aylist = np.array(aylist)
+
+### OLD CODE THAT WORKED
+    # for g in instances:
+    #     if g != j:
+
+    #         x_diff = g.x + g.rungevalues[i-1][0]*dt - x
+    #         y_diff = g.y + g.rungevalues[i-1][1]*dt - y
+
+    #         R = forc.calcDist(x_diff, y_diff)
+    #         theta = forc.calcTheta(x_diff, y_diff)
+    #         F = forc.calcForce(R, j.mass, g.mass)
+
+    #         ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
+
+    #         axlist.append(ax)
+    #         aylist.append(ay)
+
+    # if j.name == "Earth":
+    #     agasx,agasy = forc.calcDrag(x,y,j,vx,vy,dt)
+    #     axlist.append(agasx)
+    #     aylist.append(agasy)
+
+    # axlist = np.array(axlist)
+    # aylist = np.array(aylist)
 
     return np.sum(axlist),np.sum(aylist)
 

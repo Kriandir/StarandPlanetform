@@ -21,7 +21,7 @@ def asktimesteps():
                 continue
 
 
-    asktimes = raw_input("Would you like to set timesteps/stepamount? (y/n) ").lower()
+    asktimes = raw_input("Would you like to set timesteps? (y/n) ").lower()
     if asktimes == "y":
 
         while True:

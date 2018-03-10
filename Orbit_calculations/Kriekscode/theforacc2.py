@@ -85,3 +85,42 @@ def calcDrag(x, y, orbital, vx, vy, dt):
     ay = Dragacc(vy,vgasy)
 
     return ax,ay
+
+
+def calcDragHW(x, y, orbital, vx, vy, dt, hw):
+    """Calculate drag Earth experiences"""
+
+
+    # calculate distance to center of mass and theta
+    rx,ry = orbital.RKCM(dt)
+    xcm = rx-x
+    ycm = ry-y
+    R = calcDist(xcm,ycm)
+    theta = calcTheta(x,y)
+    # calculate gas velocity in the x and y direction
+    vkep = calcKepp(R)
+    vhw = hw * vkep
+    vgas = vkep - vhw
+    vgasx = math.cos(theta)*vgas
+    vgasy = math.sin(theta)*vgas
+
+    # Set the velocity of gas in the proper direction
+    ex = 1
+    ey = 1
+    if x < 0:
+        ey = -ey
+        if y > 0:
+            ex = -ex
+
+    if x > 0:
+        if y > 0:
+            ex = -ex
+
+    vgasx = (vgasx)*ex
+    vgasy = (vgasy)*ey
+
+    # Calculate acceleration as a result of the dragforce on the planet
+    ax = Dragacc(vx,vgasx)
+    ay = Dragacc(vy,vgasy)
+
+    return ax,ay

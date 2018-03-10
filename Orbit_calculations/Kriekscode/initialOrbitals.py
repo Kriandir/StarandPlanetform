@@ -57,6 +57,8 @@ class Orbitals(object):
         if isinstance(self,Planet):
             self.vy = (1/(1+q))*np.sqrt(G*(Ms+self.mass)/self.x)
 
+        if isinstance(self,PlanetHW):
+            self.vy = (1/(1+q))*np.sqrt(G*(Ms+self.mass)/self.x)
 
 
 #  IF object is a star calculate its velocity
@@ -86,6 +88,21 @@ class Planet(Orbitals):
 
         Orbitals.__init__(self,name,mass)
 
+# inherit Orbital parent qualities and define a planet
+class PlanetHW(Orbitals):
+    """Initiazion planet subclasses"""
+
+    def __init__(self,name,a,q,e,mass, hw):
+        self.x = a
+        self.e = e
+        self.vy = 0
+        self.y = 0
+        self.vx = 0
+        self.q = q
+        self.headwind = hw
+
+
+        Orbitals.__init__(self,name,mass)
 
 # inherit Orbital parent qualities and define a star
 class Star(Orbitals):
