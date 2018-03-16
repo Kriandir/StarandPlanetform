@@ -51,7 +51,6 @@ def Dragacc(v, vgas):
 def calcDrag(x, y, orbital, vx, vy, dt):
     """Calculate drag Earth experiences"""
 
-
     # calculate distance to center of mass and theta
     rx,ry = orbital.RKCM(dt)
     xcm = rx-x
@@ -89,7 +88,6 @@ def calcDrag(x, y, orbital, vx, vy, dt):
 
 def calcDragHW(x, y, orbital, vx, vy, dt, hw):
     """Calculate drag Earth experiences"""
-
 
     # calculate distance to center of mass and theta
     rx,ry = orbital.RKCM(dt)

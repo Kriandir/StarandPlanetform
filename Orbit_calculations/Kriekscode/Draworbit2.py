@@ -1,3 +1,4 @@
+from __future__ import division
 import Eulerorbit as k
 import Leapfrogorbit as lf
 import initialOrbitals as ic
@@ -30,7 +31,9 @@ def calc_resonance_orbits(P_fraction):
         y.append(r * np.sin(theta))
     return x, y
 
-def Draw():
+def Draw(headwind_var):
+    ic.gashead = headwind_var
+
     # decide if save or plot figure
     save = False
     colorplot = False
@@ -42,12 +45,12 @@ def Draw():
     # define the figure
     fig = plt.figure("2 body system", figsize=(10,20))
     # ax1 = fig.add_subplot(311)
-    ax1 = fig.add_subplot(211)
-    ax1.set_xlabel("x (AU)")
-    ax1.set_ylabel("y (AU)")
-    ax1.set_title('hw = %.1f percent , runtime = %.f yrs' % (ic.gashead * 100, ic.stepamount / 100. ))
+    # ax1 = fig.add_subplot(111)
+    # ax1.set_xlabel("x (AU)")
+    # ax1.set_ylabel("y (AU)")
+    # ax1.set_title('hw = %.1f percent , runtime = %.f yrs' % (ic.gashead * 100, ic.stepamount / 100. ))
 
-    ax2 = fig.add_subplot(212)
+    ax2 = fig.add_subplot(111)
     ax2.set_xlabel('Time (yrs)')
     ax2.set_ylabel('Distance to sun (AU)')     
     # ax2.set_ylabel("Energydifference in %")
@@ -56,26 +59,16 @@ def Draw():
 
     ic.Orbitals.instances = []
     q = ic.Ms/Mj			# Mass ratio sun / jup
-    Earth = ic.Planet("Planet", ic.a, ic.e, q, Mj)
-    Earth2 = ic.Planet("Earth",ic.a * 2, ic.e, ic.q, ic.Mp)
+    Earth = ic.Planet("Planet", "Jupiter", ic.a, ic.e, q, Mj, 'red')
+    Earth2 = ic.Planet("Earth", "Earth", ic.a * 2, ic.e, ic.q, ic.Mp, 'blue')
 
-    hws = np.arange(3.0, 3.2, 0.05)
-    hws = hws / 100.
-    test_masses = []
+    print 'Working on body no. %s'%str(master_index+1)
+    # print 'Radius orbit 1 = ', ic.a * 2/ AU, 'AU'
+    # print 'Radius orbit 2 = ', ic.a/ AU, 'AU'
+    # print 'Stepsize dt    = ', ic.dt, 's'
+    # print 'Stepamount     = ', ic.stepamount, '\n'
 
-    for i in range(len(hws)):
-        test_masses.append(ic.PlanetHW("HW_%.4f" % hws[i], ic.a*2, ic.e, ic.q, ic.Mp, hws[i]))
-
-        print test_masses[i].headwind
-
-
-    print '\n'
-    print 'Radius orbit 1 = ', ic.a * 2/ AU, 'AU'
-    print 'Radius orbit 2 = ', ic.a/ AU, 'AU'
-    print 'Stepsize dt    = ', ic.dt, 's'
-    print 'Stepamount     = ', ic.stepamount, '\n'
-
-    Sun = ic.Star("Star",ic.Ms)
+    Sun = ic.Star("Star", "Sun", ic.Ms, 'black')
 
     for i in ic.Orbitals.instances:
         if 'HW' in i.name:
@@ -85,9 +78,9 @@ def Draw():
 
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
-    for i in ic.Orbitals.instances:
-        print 'Initial x position %s = %.4e AU' % (i.name, i.x/AU)
-        print 'Initial y velocity %s = %.4e m/s' % (i.name, i.vy)
+    # for i in ic.Orbitals.instances:
+    #     print 'Initial x position %s = %.4e AU' % (i.name, i.x/AU)
+    #     print 'Initial y velocity %s = %.4e m/s' % (i.name, i.vy)
 
 
 ################
@@ -126,8 +119,10 @@ def Draw():
     xs10list=[]
     ys10list = []
 
-    res_colors = ['black', 'black', 'black', '#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+    res_colors = ['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+
     k = 0
+    testMassNum = 0
     for i in ic.Orbitals.instances:
         # if i.name == "Earth":
         #     for j in range(len(i.xlist)):
@@ -141,16 +136,12 @@ def Draw():
         #             ys10list.append(i.ylist[j])
 
 
-        ax1.plot(np.array(i.xlist) / ic.a, np.array(i.ylist) / ic.a, label = i.name, c=res_colors[k])
-
-        # if i.name == "Earth":
-        #     dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
-        #     ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun)
+        # ax1.plot(np.array(i.xlist) / ic.a, np.array(i.ylist) / ic.a, label = i.expl_name, c=i.color)
 
 
-        if 'HW' in i.name:
+        if i.name == "Earth":
             dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
-            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label=i.name, c=res_colors[k])
+            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
 
         k += 1
 
@@ -170,24 +161,35 @@ def Draw():
         pass
 
     os.chdir(newdir)
-    ax1.legend(loc = 'upper left')
-    ax2.legend(loc = 'upper left')
+    # ax1.legend(loc = 'upper left')
+    # ax2.legend(loc = 'upper left')
     # ax3.legend(loc = 'upper left')
 
     # add resonance orbits
-    resonances = [0.5, 2. / 3, 3. / 4, 2, 1.5, 4./ 3]
+    resonances = [1/2, 2/3, 3/4, 2, 3/2, 4/3]
+    resonances_labels = ['1/2', '2/3', '3/4', '2', '3/2', '4/3']
+
     res_colors = ['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
     col = 0
 
-    for frac in resonances:
-        x, y = calc_resonance_orbits(frac)
-        ax1.plot(np.array(x) / ic.a, np.array(y) / ic.a, c=res_colors[col], ls='dotted', label='Pe/Pj = %.1f'%frac)
-        ax2.axhline(np.sqrt(np.array(x[0])**2 + np.array(y[0])**2) / ic.a, c=res_colors[col], ls='dotted', label='Pe/Pj = %.1f'%frac)
-        col += 1
+    if master_index == lenHWs - 1:
+        for frac in resonances:
+            x, y = calc_resonance_orbits(frac)
+            if frac < 1:
+                # ax1.plot(np.array(x) / ic.a, np.array(y) / ic.a, c=res_colors[col], ls='dotted', lw=2, label='Pe/Pj = %s'%resonances_labels[col])
+                ax2.axhline(np.sqrt(np.array(x[0])**2 + np.array(y[0])**2) / ic.a, c=res_colors[col], ls='dotted', label='Pe/Pj = %s'%resonances_labels[col])
+            else:
+                # ax1.plot(np.array(x) / ic.a, np.array(y) / ic.a, c=res_colors[col], ls='dashed', lw=2, label='Pe/Pj = %s'%resonances_labels[col])
+                ax2.axhline(np.sqrt(np.array(x[0])**2 + np.array(y[0])**2) / ic.a, c=res_colors[col], ls='dashed', label='Pe/Pj = %s'%resonances_labels[col])
 
+            col += 1
 
-    # plt.savefig('plot_with_hw_'+str(ic.gashead * 100)+'percent_and_runtime_'+str(ic.stepamount / 100.)+'yrs.png')
-    plt.legend()
+        ax2.axhline(1, c='red', label="Jupiter's orbit")
+        # ax2.axhline(1.06815, c='red', label="Jupiter's Hillsphere", alpha=0.6)
+        ax2.fill_between(np.arange(-100, 1000), 1, 1.06815, label="Jupiter's Hillsphere", alpha=0.3, color='red')
+
+        # plt.savefig('plot_with_hw_'+str(ic.gashead * 100)+'percent_and_runtime_'+str(ic.stepamount / 100.)+'yrs.png')
+        ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=5)
 
     if save:
         np.save("Orbitals.npy",ic.Orbitals.instances)
@@ -196,6 +198,15 @@ def Draw():
         np.save("stepamount.npy",ic.stepamount)
         print 'saving under:' + str(newdir)
         plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
-    else:
-        plt.show()
-Draw()
+
+
+
+# headwinds = np.arange(3.05, 3.56, 0.1)
+headwinds = [2.9, 3.05, 3.25]
+lenHWs = len(headwinds)
+master_index = 0
+for i in range(len(headwinds)):
+    Draw(headwinds[i] / 100)
+    master_index += 1
+
+plt.show()

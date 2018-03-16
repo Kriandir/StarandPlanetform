@@ -71,20 +71,28 @@ def calcaccx(x, y, j, i, instances, dt,vx,vy):
  
     for g in instances:
         if g != j:
+            # print j.name, g.name
+
             if 'HW' in g.name:
                 continue
             else:
-                x_diff = g.x + g.rungevalues[i-1][0]*dt - x
-                y_diff = g.y + g.rungevalues[i-1][1]*dt - y
 
-                R = forc.calcDist(x_diff, y_diff)
-                theta = forc.calcTheta(x_diff, y_diff)
-                F = forc.calcForce(R, j.mass, g.mass)
+                if 'HW' in j.name and g.name == "Earth":
+                    continue
 
-                ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
+                else:
+                    # print j.expl_name, ':', g.expl_name
+                    x_diff = g.x + g.rungevalues[i-1][0]*dt - x
+                    y_diff = g.y + g.rungevalues[i-1][1]*dt - y
 
-                axlist.append(ax)
-                aylist.append(ay)
+                    R = forc.calcDist(x_diff, y_diff)
+                    theta = forc.calcTheta(x_diff, y_diff)
+                    F = forc.calcForce(R, j.mass, g.mass)
+
+                    ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
+
+                    axlist.append(ax)
+                    aylist.append(ay)
 
     if j.name == "Earth":
         agasx,agasy = forc.calcDrag(x,y,j,vx,vy,dt)

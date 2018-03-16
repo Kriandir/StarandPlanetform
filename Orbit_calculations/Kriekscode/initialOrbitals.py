@@ -77,13 +77,15 @@ class Orbitals(object):
 class Planet(Orbitals):
     """Initiazion planet subclasses"""
 
-    def __init__(self,name,a,q,e,mass):
+    def __init__(self,name, expl_name, a,q,e,mass, color):
         self.x = a
         self.e = e
         self.vy = 0
         self.y = 0
         self.vx = 0
         self.q = q
+        self.expl_name = expl_name
+        self.color = color
 
 
         Orbitals.__init__(self,name,mass)
@@ -92,7 +94,7 @@ class Planet(Orbitals):
 class PlanetHW(Orbitals):
     """Initiazion planet subclasses"""
 
-    def __init__(self,name,a,q,e,mass, hw):
+    def __init__(self,name, expl_name, a,q,e,mass, hw):
         self.x = a
         self.e = e
         self.vy = 0
@@ -100,6 +102,7 @@ class PlanetHW(Orbitals):
         self.vx = 0
         self.q = q
         self.headwind = hw
+        self.expl_name=expl_name
 
 
         Orbitals.__init__(self,name,mass)
@@ -107,11 +110,13 @@ class PlanetHW(Orbitals):
 # inherit Orbital parent qualities and define a star
 class Star(Orbitals):
     """Initization star subclasses"""
-    def __init__(self,name,mass):
+    def __init__(self,name, expl_name, mass, color):
         self.x = 0
         self.y = 0
         self.vy = 0
         self.vx = 0
+        self.color = color
+        self.expl_name = expl_name
         Orbitals.__init__(self,name,mass)
 
 
