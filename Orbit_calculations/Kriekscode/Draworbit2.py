@@ -49,7 +49,7 @@ def Draw(headwind_var, jup_vars):
         name = "Runge-Kutta"
 
     # define the figure
-    fig = plt.figure("2 body system", figsize=(10,10))
+    fig = plt.figure("Mass = %s M_j" % (str(Mj / 1.898e27)), figsize=(10,10))
     # ax1 = fig.add_subplot(111)
     # ax1.set_xlabel("x (AU)")
     # ax1.set_ylabel("y (AU)")
@@ -60,6 +60,7 @@ def Draw(headwind_var, jup_vars):
     ax2.set_ylabel('Distance to sun (AU)', fontsize=14)
     ax2.tick_params(labelsize=12)
     ax2.set_xlim([0, ic.stepamount / 100])
+    ax2.set_ylim([0, 2.5])
 
     # ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
     # ax3.set_ylabel("Angularmomentum in  %")
@@ -142,7 +143,7 @@ def Draw(headwind_var, jup_vars):
 
         i+=1
 
-    print vrlist
+    vr_of_run = np.mean(vrlist)
 
 # set the angular momentum and energy as a fraction of its initial value (percentages)
     absenglist = []
@@ -180,6 +181,8 @@ def Draw(headwind_var, jup_vars):
             dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
             # ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k, Mj = '+str(Mj / 1.898e27)+'Mj', c=res_colors[master_index])
             ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
+            ax2.annotate("Mj = "+str(Mj / 1.898e27)+"M_jupiter", xy=(10, 0.25), ha='left', va='center', fontsize='14', fontweight='bold')
+            ax2.annotate("Mj/Me = %.2g" % (Mj / ic.Mp), xy=(10, 0.15), ha='left', va='center', fontsize='14', fontweight='bold')
 
         k += 1
 
@@ -191,14 +194,14 @@ def Draw(headwind_var, jup_vars):
     #     ax2.scatter(xs10list[i],ys10list[i],color=colorz)
     # ax2.plot(range(0,ic.stepamount),absenglist, label = method)
     # ax3.plot(range(0,ic.stepamount),absangmomlist, label = method)
-    cwd = os.getcwd()
-    newdir = cwd+"/"+"dt_of_"+str(int(ic.dt))+"years_of"+str(int(ic.stepamount*ic.dt/(365.25*25*3600)))
-    try:
-        os.mkdir(newdir)
-    except:
-        pass
+    # cwd = os.getcwd()
+    # newdir = cwd+"/"+"dt_of_"+str(int(ic.dt))+"years_of"+str(int(ic.stepamount*ic.dt/(365.25*25*3600)))
+    # try:
+    #     os.mkdir(newdir)
+    # except:
+    #     pass
 
-    os.chdir(newdir)
+    # os.chdir(newdir)
     # ax1.legend(loc = 'upper left')
     # ax2.legend(loc = 'upper left')
     # ax3.legend(loc = 'upper left')
@@ -228,7 +231,7 @@ def Draw(headwind_var, jup_vars):
         ax2.axhline(1, c='red', label="Jupiter's orbit")
         ax2.fill_between(np.arange(-100, 1000), 1 - r_hill_jup, 1 + r_hill_jup, label="Jupiter's Hillsphere", alpha=0.3, color='red')
 
-    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=4, fontsize=12)
+    # ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=4, fontsize=12)
 
     if save:
         np.save("Orbitals.npy",ic.Orbitals.instances)
@@ -239,21 +242,37 @@ def Draw(headwind_var, jup_vars):
         plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
 
     # plt.show()
+    return vr_of_run
 
-
-headwinds = np.arange(2.0, 3.1, 0.2)
+# headwinds = np.arange(2.0, 3.1, 0.2)
 # headwinds = [2.9, 2.95, 3.0]
-# headwinds = np.arange(1, 5.1, 1)
-
+headwinds = np.arange(1, 5.1, 1)
 lenHWs = len(headwinds)
-print 'Number of bodies to do: ', lenHWs
-master_index = 0
 
+jup_masses = [1.898e26, 1.898e27, 1.898e28, 1.898e29]
+lenMasses = len(jup_masses)
+print 'Number of bodies to do: ', lenHWs*lenMasses
+
+
+all_vr_of_runs = np.zeros([lenMasses, lenHWs])
+
+headwinds = [3]
 jup_masses = [1.898e27]
 
-for i in range(len(headwinds)):
-    for j in range(len(jup_masses)):
-        Draw(headwinds[i] / 100., jup_masses[j])
+
+for j in range(len(jup_masses)):
+    master_index = 0
+
+    for i in range(len(headwinds)):
+        vr_of_run = Draw(headwinds[i] / 100., jup_masses[j])
         master_index += 1
 
-plt.show()
+        all_vr_of_runs[j, i] = vr_of_run
+
+    # plt.show(block=False)
+    cwd = os.getcwd()
+    plt.savefig(os.path.abspath(os.path.join(cwd, 'plot_diff_masses_%smj.png' % str(jup_masses[j] / 1.898e27))))
+
+np.save('all_vr_of_runs.npy', all_vr_of_runs)
+
+print all_vr_of_runs
