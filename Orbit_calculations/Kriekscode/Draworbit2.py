@@ -22,8 +22,8 @@ try:
 except(KeyboardInterrupt):
     sys.exit(0)
 
-def calc_resonance_orbits(P_fraction):
-    r = P_fraction**(2. / 3) * ic.a
+def calc_resonance_orbits(P_fraction, M_J, M_e, M_s):
+    r = P_fraction**(2. / 3) * ((M_s + M_e) / (M_s + M_J))**(1. / 3) * ic.a
     x = []
     y = []
     for theta in np.linspace(0, (2*np.pi), num=1000):
@@ -32,7 +32,6 @@ def calc_resonance_orbits(P_fraction):
     return x, y
 
 def calc_rH(M_J, M_s):
-    print M_J, M_s
     r_H = (M_J / (3 * M_s))**(1./3)
     return r_H
 
@@ -50,7 +49,7 @@ def Draw(headwind_var, jup_vars):
         name = "Runge-Kutta"
 
     # define the figure
-    fig = plt.figure("2 body system", figsize=(10,20))
+    fig = plt.figure("2 body system", figsize=(15,8))
     # ax1 = fig.add_subplot(311)
     # ax1 = fig.add_subplot(111)
     # ax1.set_xlabel("x (AU)")
@@ -58,9 +57,11 @@ def Draw(headwind_var, jup_vars):
     # ax1.set_title('hw = %.1f percent , runtime = %.f yrs' % (ic.gashead * 100, ic.stepamount / 100. ))
 
     ax2 = fig.add_subplot(111)
-    ax2.set_xlabel('Time (yrs)')
-    ax2.set_ylabel('Distance to sun (AU)')
-    # ax2.set_xlim([0, ic.stepamount * ic.dt / (10*365.25*3600*24)**2])
+    ax2.set_xlabel('Time (yrs)', fontsize=14)
+    ax2.set_ylabel('Distance to sun (AU)', fontsize=14)
+    ax2.tick_params(labelsize=12)
+    ax2.set_xlim([0, ic.stepamount / 100])
+
     # ax2.set_ylabel("Energydifference in %")
     # ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
     # ax3.set_ylabel("Angularmomentum in  %")
@@ -184,7 +185,7 @@ def Draw(headwind_var, jup_vars):
 
     if master_index == lenHWs - 1:
         for frac in resonances:
-            x, y = calc_resonance_orbits(frac)
+            x, y = calc_resonance_orbits(frac, Mj, ic.Mp, ic.Ms)
             if frac < 1:
                 # ax1.plot(np.array(x) / ic.a, np.array(y) / ic.a, c=res_colors[col], ls='dotted', lw=2, label='Pe/Pj = %s'%resonances_labels[col])
                 ax2.axhline(np.sqrt(np.array(x[0])**2 + np.array(y[0])**2) / ic.a, c=res_colors[col], ls='dotted', label='Pe/Pj = %s'%resonances_labels[col])
@@ -202,7 +203,7 @@ def Draw(headwind_var, jup_vars):
         ax2.fill_between(np.arange(-100, 1000), 1 - r_hill_jup, 1 + r_hill_jup, label="Jupiter's Hillsphere", alpha=0.3, color='red')
 
         # plt.savefig('plot_with_hw_'+str(ic.gashead * 100)+'percent_and_runtime_'+str(ic.stepamount / 100.)+'yrs.png')
-    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=5)
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=4, fontsize=12)
 
     if save:
         np.save("Orbitals.npy",ic.Orbitals.instances)
@@ -214,12 +215,13 @@ def Draw(headwind_var, jup_vars):
 
     # plt.show()
 
+
 # headwinds = np.arange(3.05, 3.56, 0.1)
-headwinds = [2.]
+headwinds = [1, 2, 3, 4, 5]
 lenHWs = len(headwinds)
 master_index = 0
 
-jup_masses = [1.898e28, 1.898e27, 1.898e26, 1.898e25]
+jup_masses = [1.898e27]
 
 for i in range(len(headwinds)):
     for j in range(len(jup_masses)):
