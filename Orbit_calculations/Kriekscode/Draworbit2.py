@@ -49,8 +49,7 @@ def Draw(headwind_var, jup_vars):
         name = "Runge-Kutta"
 
     # define the figure
-    fig = plt.figure("2 body system", figsize=(15,8))
-    # ax1 = fig.add_subplot(311)
+    fig = plt.figure("2 body system", figsize=(10,10))
     # ax1 = fig.add_subplot(111)
     # ax1.set_xlabel("x (AU)")
     # ax1.set_ylabel("y (AU)")
@@ -62,7 +61,6 @@ def Draw(headwind_var, jup_vars):
     ax2.tick_params(labelsize=12)
     ax2.set_xlim([0, ic.stepamount / 100])
 
-    # ax2.set_ylabel("Energydifference in %")
     # ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
     # ax3.set_ylabel("Angularmomentum in  %")
 
@@ -98,11 +96,39 @@ def Draw(headwind_var, jup_vars):
     angmomlist = []
     i = 0
 
-    # make sure that the initialv if using leapfrog is moved back by 0.5 dt
+    ctr = 0
+    stoporbitvr = False
+    ilast = 0
+    vrlist = []
+
     # Looping over the time steps
     while i < ic.stepamount:
         # determine which calculation we will perform
         u.calcRK(ic.dt)
+
+        # determine the Vr of earth
+        if not stoporbitvr:
+            for g in ic.Orbitals.instances:
+                if g.name == "Earth":
+                    if g.y <= 7070000000 and g.y >=0 and g.x >=0:
+                        if ilast +1 == i:
+                            ilast = i
+                            continue
+                        ilast = i
+
+                        if i == 0:
+                            r0 = np.sqrt(g.y**2 + g.x**2)
+
+                        if i != 0:
+
+                            r = np.sqrt(g.y**2+g.x**2)
+                            vrlist.append((((r0/ic.a)-(r/ic.a))/(i/100)))
+                            ctr+=1
+                        if ctr == 5:
+                            stoporbitvr = True
+
+                    break
+
 
 
         # calculate energy and angular momentum
@@ -115,6 +141,8 @@ def Draw(headwind_var, jup_vars):
             startangmom = ae.angmom()
 
         i+=1
+
+    print vrlist
 
 # set the angular momentum and energy as a fraction of its initial value (percentages)
     absenglist = []
@@ -145,14 +173,13 @@ def Draw(headwind_var, jup_vars):
         #             ys10list.append(i.ylist[j])
 
 
-        # ax1.plot(np.array(i.xlist) / ic.a, np.array(i.ylist) / ic.a, label = i.expl_name, c=i.color)
+        # ax1.plot(np.array(i.xlist) / ic.a, np.array(i.ylist) / ic.a, label=i.expl_name, c=i.color)
 
 
         if i.name == "Earth":
             dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
-            # print 'in i.name = Earth'
-            # print master_index
-            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k, Mj = '+str(Mj / 1.898e27)+'Mj', c=res_colors[master_index])
+            # ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k, Mj = '+str(Mj / 1.898e27)+'Mj', c=res_colors[master_index])
+            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
 
         k += 1
 
@@ -199,10 +226,8 @@ def Draw(headwind_var, jup_vars):
         r_hill_jup = calc_rH(Mj, ic.Ms)
 
         ax2.axhline(1, c='red', label="Jupiter's orbit")
-        # ax2.axhline(1.06815, c='red', label="Jupiter's Hillsphere", alpha=0.6)
         ax2.fill_between(np.arange(-100, 1000), 1 - r_hill_jup, 1 + r_hill_jup, label="Jupiter's Hillsphere", alpha=0.3, color='red')
 
-        # plt.savefig('plot_with_hw_'+str(ic.gashead * 100)+'percent_and_runtime_'+str(ic.stepamount / 100.)+'yrs.png')
     ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=4, fontsize=12)
 
     if save:
@@ -216,9 +241,12 @@ def Draw(headwind_var, jup_vars):
     # plt.show()
 
 
-# headwinds = np.arange(3.05, 3.56, 0.1)
-headwinds = [1, 2, 3, 4, 5]
+headwinds = np.arange(2.0, 3.1, 0.2)
+# headwinds = [2.9, 2.95, 3.0]
+# headwinds = np.arange(1, 5.1, 1)
+
 lenHWs = len(headwinds)
+print 'Number of bodies to do: ', lenHWs
 master_index = 0
 
 jup_masses = [1.898e27]
