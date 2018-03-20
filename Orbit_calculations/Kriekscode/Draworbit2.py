@@ -207,10 +207,10 @@ def Draw(headwind_var, jup_vars):
     # ax3.legend(loc = 'upper left')
 
     # add resonance orbits
-    resonances = [1/2, 2/3, 3/4, 2, 3/2, 4/3]
-    resonances_labels = ['1/2', '2/3', '3/4', '2', '3/2', '4/3']
+    resonances = [1/2, 2/3, 3/4, 2, 3/2, 4/3, 9/4, 7/3, 5/2]
+    resonances_labels = ['1/2', '2/3', '3/4', '2', '3/2', '4/3', '9/4', '7/3', '5/2']
 
-    res_colors = ['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+    res_colors = ['#b35806','#e08214','#fdb863','#fee0b6','#f7f7f7','#d8daeb','#b2abd2','#8073ac','#542788']    
     col = 0
 
     if master_index == lenHWs - 1:
