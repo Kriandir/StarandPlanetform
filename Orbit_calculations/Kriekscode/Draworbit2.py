@@ -31,8 +31,15 @@ def calc_resonance_orbits(P_fraction):
         y.append(r * np.sin(theta))
     return x, y
 
-def Draw(headwind_var):
+def calc_rH(M_J, M_s):
+    print M_J, M_s
+    r_H = (M_J / (3 * M_s))**(1./3)
+    return r_H
+
+def Draw(headwind_var, jup_vars):
     ic.gashead = headwind_var
+
+    Mj = jup_vars
 
     # decide if save or plot figure
     save = False
@@ -52,7 +59,8 @@ def Draw(headwind_var):
 
     ax2 = fig.add_subplot(111)
     ax2.set_xlabel('Time (yrs)')
-    ax2.set_ylabel('Distance to sun (AU)')     
+    ax2.set_ylabel('Distance to sun (AU)')
+    # ax2.set_xlim([0, ic.stepamount * ic.dt / (10*365.25*3600*24)**2])
     # ax2.set_ylabel("Energydifference in %")
     # ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
     # ax3.set_ylabel("Angularmomentum in  %")
@@ -141,11 +149,13 @@ def Draw(headwind_var):
 
         if i.name == "Earth":
             dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
-            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
+            # print 'in i.name = Earth'
+            # print master_index
+            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k, Mj = '+str(Mj / 1.898e27)+'Mj', c=res_colors[master_index])
 
         k += 1
 
-    
+
     # colors = iter(cm.rainbow(np.linspace(0, 1, len(x10list))))
     # for i in range(len(x10list)):
     #     colorz = next(colors)
@@ -184,12 +194,15 @@ def Draw(headwind_var):
 
             col += 1
 
+
+        r_hill_jup = calc_rH(Mj, ic.Ms)
+
         ax2.axhline(1, c='red', label="Jupiter's orbit")
         # ax2.axhline(1.06815, c='red', label="Jupiter's Hillsphere", alpha=0.6)
-        ax2.fill_between(np.arange(-100, 1000), 1, 1.06815, label="Jupiter's Hillsphere", alpha=0.3, color='red')
+        ax2.fill_between(np.arange(-100, 1000), 1 - r_hill_jup, 1 + r_hill_jup, label="Jupiter's Hillsphere", alpha=0.3, color='red')
 
         # plt.savefig('plot_with_hw_'+str(ic.gashead * 100)+'percent_and_runtime_'+str(ic.stepamount / 100.)+'yrs.png')
-        ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=5)
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=5)
 
     if save:
         np.save("Orbitals.npy",ic.Orbitals.instances)
@@ -199,14 +212,18 @@ def Draw(headwind_var):
         print 'saving under:' + str(newdir)
         plt.savefig("plot_with_dt_"+str(ic.dt) +"and_years_"+str(ic.stepamount*ic.dt/(365.25*25*3600))+".png")
 
-
+    # plt.show()
 
 # headwinds = np.arange(3.05, 3.56, 0.1)
-headwinds = [2.9, 3.05, 3.25]
+headwinds = [2.]
 lenHWs = len(headwinds)
 master_index = 0
+
+jup_masses = [1.898e28, 1.898e27, 1.898e26, 1.898e25]
+
 for i in range(len(headwinds)):
-    Draw(headwinds[i] / 100)
-    master_index += 1
+    for j in range(len(jup_masses)):
+        Draw(headwinds[i] / 100., jup_masses[j])
+        master_index += 1
 
 plt.show()
