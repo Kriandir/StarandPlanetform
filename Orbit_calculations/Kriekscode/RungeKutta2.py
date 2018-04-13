@@ -107,30 +107,6 @@ def calcaccx(x, y, j, i, instances, dt,vx,vy):
     axlist = np.array(axlist)
     aylist = np.array(aylist)
 
-### OLD CODE THAT WORKED
-    # for g in instances:
-    #     if g != j:
-
-    #         x_diff = g.x + g.rungevalues[i-1][0]*dt - x
-    #         y_diff = g.y + g.rungevalues[i-1][1]*dt - y
-
-    #         R = forc.calcDist(x_diff, y_diff)
-    #         theta = forc.calcTheta(x_diff, y_diff)
-    #         F = forc.calcForce(R, j.mass, g.mass)
-
-    #         ax, ay = forc.calcAcc(x_diff, y_diff, F, j.mass, theta)
-
-    #         axlist.append(ax)
-    #         aylist.append(ay)
-
-    # if j.name == "Earth":
-    #     agasx,agasy = forc.calcDrag(x,y,j,vx,vy,dt)
-    #     axlist.append(agasx)
-    #     aylist.append(agasy)
-
-    # axlist = np.array(axlist)
-    # aylist = np.array(aylist)
-
     return np.sum(axlist),np.sum(aylist)
 
 # Runge-kutta function

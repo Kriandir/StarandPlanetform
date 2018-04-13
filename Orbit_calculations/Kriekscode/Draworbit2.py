@@ -61,6 +61,7 @@ def Draw(headwind_var, jup_vars):
     ax2.tick_params(labelsize=12)
     ax2.set_xlim([0, ic.stepamount / 100])
     ax2.set_ylim([0, 2.5])
+    # ax2.set_xscale('log')
 
     # ax3 = fig.add_subplot(313,sharex = ax2,sharey= ax2)
     # ax3.set_ylabel("Angularmomentum in  %")
@@ -68,13 +69,9 @@ def Draw(headwind_var, jup_vars):
     ic.Orbitals.instances = []
     q = ic.Ms/Mj			# Mass ratio sun / jup
     Earth = ic.Planet("Planet", "Jupiter", ic.a, ic.e, q, Mj, 'red')
-    Earth2 = ic.Planet("Earth", "Earth", ic.a * 2, ic.e, ic.q, ic.Mp, 'blue')
+    Earth2 = ic.Planet("Earth", "Earth", 0.99 * ( 2 * ic.a), ic.e, ic.q, ic.Mp, 'blue')
 
     print 'Working on body no. %s'%str(master_index+1)
-    # print 'Radius orbit 1 = ', ic.a * 2/ AU, 'AU'
-    # print 'Radius orbit 2 = ', ic.a/ AU, 'AU'
-    # print 'Stepsize dt    = ', ic.dt, 's'
-    # print 'Stepamount     = ', ic.stepamount, '\n'
 
     Sun = ic.Star("Star", "Sun", ic.Ms, 'black')
 
@@ -86,9 +83,6 @@ def Draw(headwind_var, jup_vars):
 
     for i in ic.Orbitals.instances:
         i.InitialSpeed()
-    # for i in ic.Orbitals.instances:
-    #     print 'Initial x position %s = %.4e AU' % (i.name, i.x/AU)
-    #     print 'Initial y velocity %s = %.4e m/s' % (i.name, i.vy)
 
 
 ################
@@ -108,27 +102,27 @@ def Draw(headwind_var, jup_vars):
         u.calcRK(ic.dt)
 
         # determine the Vr of earth
-        if not stoporbitvr:
-            for g in ic.Orbitals.instances:
-                if g.name == "Earth":
-                    if g.y <= 7070000000 and g.y >=0 and g.x >=0:
-                        if ilast +1 == i:
-                            ilast = i
-                            continue
-                        ilast = i
+        # if not stoporbitvr:
+        #     for g in ic.Orbitals.instances:
+        #         if g.name == "Earth":
+        #             if g.y <= 7070000000 and g.y >=0 and g.x >=0:
+        #                 if ilast +1 == i:
+        #                     ilast = i
+        #                     continue
+        #                 ilast = i
 
-                        if i == 0:
-                            r0 = np.sqrt(g.y**2 + g.x**2)
+        #                 if i == 0:
+        #                     r0 = np.sqrt(g.y**2 + g.x**2)
 
-                        if i != 0:
+        #                 if i != 0:
 
-                            r = np.sqrt(g.y**2+g.x**2)
-                            vrlist.append((((r0/ic.a)-(r/ic.a))/(i/100)))
-                            ctr+=1
-                        if ctr == 5:
-                            stoporbitvr = True
+        #                     r = np.sqrt(g.y**2+g.x**2)
+        #                     vrlist.append((((r0/ic.a)-(r/ic.a))/(i/100)))
+        #                     ctr+=1
+        #                 if ctr == 5:
+        #                     stoporbitvr = True
 
-                    break
+        #             break
 
 
 
@@ -176,13 +170,30 @@ def Draw(headwind_var, jup_vars):
 
         # ax1.plot(np.array(i.xlist) / ic.a, np.array(i.ylist) / ic.a, label=i.expl_name, c=i.color)
 
+        if i.expl_name == "Jupiter":
+            jup_x = np.array(i.xlist)
+            jup_y = np.array(i.ylist)
 
         if i.name == "Earth":
             dist_sun = np.sqrt(np.array(i.xlist)**2 + np.array(i.ylist)**2) / ic.a
-            # ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k, Mj = '+str(Mj / 1.898e27)+'Mj', c=res_colors[master_index])
-            ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
+            dist_sun2 = []
+
+            for k in range(len(dist_sun)):
+                if dist_sun[k] >= 0.1:
+                    dist_sun2.append(dist_sun[k])
+                else:
+                    break
+
+            dist_jup = np.sqrt(np.array(i.xlist - jup_x)**2 + np.array(i.ylist - jup_y)**2) / ic.a
+            ax2.plot(np.arange(len(dist_sun2)) / 100., dist_sun2, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k, Mj = '+str(Mj / 1.898e27)+'Mj', c=res_colors[master_index])
+            # ax2.plot(np.arange(len(dist_jup)) / 100., dist_jup, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
+            # ax2.axhline(0, c='black')
+            # ax2.plot(np.arange(len(dist_sun)) / 100., dist_sun, label='HW = '+str(ic.gashead * 100)+'%'+' of v_k', c=res_colors[master_index])
             ax2.annotate("Mj = "+str(Mj / 1.898e27)+"M_jupiter", xy=(10, 0.25), ha='left', va='center', fontsize='14', fontweight='bold')
             ax2.annotate("Mj/Me = %.2g" % (Mj / ic.Mp), xy=(10, 0.15), ha='left', va='center', fontsize='14', fontweight='bold')
+
+
+
 
         k += 1
 
@@ -207,10 +218,10 @@ def Draw(headwind_var, jup_vars):
     # ax3.legend(loc = 'upper left')
 
     # add resonance orbits
-    resonances = [1/2, 2/3, 3/4, 2, 3/2, 4/3, 9/4, 7/3, 5/2]
-    resonances_labels = ['1/2', '2/3', '3/4', '2', '3/2', '4/3', '9/4', '7/3', '5/2']
+    resonances = [1/2, 2/3, 3/4, 2, 3/2, 4/3]
+    resonances_labels = ['1/2', '2/3', '3/4', '2', '3/2', '4/3']
 
-    res_colors = ['#b35806','#e08214','#fdb863','#fee0b6','#f7f7f7','#d8daeb','#b2abd2','#8073ac','#542788']    
+    res_colors = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33']
     col = 0
 
     if master_index == lenHWs - 1:
@@ -229,9 +240,9 @@ def Draw(headwind_var, jup_vars):
         r_hill_jup = calc_rH(Mj, ic.Ms)
 
         ax2.axhline(1, c='red', label="Jupiter's orbit")
-        ax2.fill_between(np.arange(-100, 1000), 1 - r_hill_jup, 1 + r_hill_jup, label="Jupiter's Hillsphere", alpha=0.3, color='red')
+        ax2.fill_between(np.arange(-100, 10000), 1 - r_hill_jup, 1 + r_hill_jup, label="Jupiter's Hillsphere", alpha=0.3, color='red')
 
-    # ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=4, fontsize=12)
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=True, ncol=4, fontsize=12)
 
     if save:
         np.save("Orbitals.npy",ic.Orbitals.instances)
@@ -244,21 +255,16 @@ def Draw(headwind_var, jup_vars):
     # plt.show()
     return vr_of_run
 
-# headwinds = np.arange(2.0, 3.1, 0.2)
-# headwinds = [2.9, 2.95, 3.0]
-headwinds = np.arange(1, 5.1, 1)
+headwinds = np.arange(3.85, 3.9, 0.01)
+# headwinds = [0.01, 0.1, 1.0]
 lenHWs = len(headwinds)
 
-jup_masses = [1.898e26, 1.898e27, 1.898e28, 1.898e29]
+jup_masses = [1.898e27]
 lenMasses = len(jup_masses)
 print 'Number of bodies to do: ', lenHWs*lenMasses
 
 
 all_vr_of_runs = np.zeros([lenMasses, lenHWs])
-
-headwinds = [3]
-jup_masses = [1.898e27]
-
 
 for j in range(len(jup_masses)):
     master_index = 0
@@ -266,12 +272,15 @@ for j in range(len(jup_masses)):
     for i in range(len(headwinds)):
         vr_of_run = Draw(headwinds[i] / 100., jup_masses[j])
         master_index += 1
-
+        print vr_of_run
         all_vr_of_runs[j, i] = vr_of_run
 
-    # plt.show(block=False)
+    plt.show(block=True)
     cwd = os.getcwd()
     plt.savefig(os.path.abspath(os.path.join(cwd, 'plot_diff_masses_%smj.png' % str(jup_masses[j] / 1.898e27))))
+    # plt.savefig(os.path.abspath(os.path.join(cwd, '15headwinds.png')))
+
+
 
 np.save('all_vr_of_runs.npy', all_vr_of_runs)
 

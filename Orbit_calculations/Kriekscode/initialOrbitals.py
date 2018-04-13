@@ -139,6 +139,3 @@ calcAll = False
 timer = False
 hourmonth = False
 timehdwm = ""
-
-# x = ((1-e)/(1+q))*a
-# v =  (1/(1+q))*np.sqrt(((1+e)/(1-e))) * np.sqrt((G*(Mp + Ms))/a)
